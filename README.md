@@ -13,13 +13,13 @@ A Hierarchical Multi-Agent Deep Reinforcement Learning trading system.
     Create (and activate) a new environment with Python 3.6.
     - __Linux__ or __Mac__: 
 	```bash
-	conda create --name drlnd python=3.6
+	conda create --name trader-rl python=3.6
 	source activate trader-rl
 	```
 	- __Windows__: 
 	```bash
 	conda create --name trader-rl python=3.6 
-	activate drlnd
+	activate trader-rl
 	```
 - Install requirements:
     ```bash
