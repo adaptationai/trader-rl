@@ -3,6 +3,8 @@ import random
 from auth import Auth
 import oandapyV20
 import oandapyV20.endpoints.instruments as instruments
+from sklearn import preprocessing
+import csv
 
 
 class DataGrabber():
@@ -25,6 +27,24 @@ class DataGrabber():
         for i in data['candles']:
             data_converted.append([i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o']])
         return data_converted
+
+
+    def normalize(self, x):
+        normalized = preprocessing.normalize(x)
+        return normalized
+
+
+    def scaled(self, x):
+        scaled = preprocessing.scale(x)
+        return scaled
+
+    
+    def tocsv(self, x, path):
+        with open(path, "a", newline='') as fp:
+            wr = csv.writer(fp, dialect='excel')
+            for i in range(len(x)):
+                wr.writerow(x[i])
+    
 
 test = DataGrabber()
 candles = test.get_candles("2016-01-01T00:00:00Z", 1440, "M1", "EUR_USD")
