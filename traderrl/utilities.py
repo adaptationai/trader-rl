@@ -26,6 +26,11 @@ class DataGrabber():
             data_converted.append([i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o']])
         return data_converted
 
+test = DataGrabber()
+candles = test.get_candles("2016-01-01T00:00:00Z", 1440, "M1", "EUR_USD")
+some_data = test.data_converted(candles)
+print(some_data)
+print(len(some_data))
 
 
 
