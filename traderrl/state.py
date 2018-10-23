@@ -1,11 +1,12 @@
 import numpy as numpy
 from utilities import DataGrabber
 import torch
+from player import Player
 
 class MarketSim():
-    def __init__(self, player):
+    def __init__(self):
         self.love = 14
-        self.player = player
+        self.player = Player()
         self.actions = [1,2,3,4]
         self.years = ['2000', '2001', '2002']
         self.count = [1440, 2880]
@@ -35,5 +36,9 @@ class MarketSim():
 
 
     def reset(self):
+        pass
+
+class MarketLive():
+    def __init__(self):
         pass
 
