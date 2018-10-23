@@ -5,6 +5,7 @@ import oandapyV20
 import oandapyV20.endpoints.instruments as instruments
 from sklearn import preprocessing
 import csv
+import torch
 
 
 class DataGrabber():
@@ -26,6 +27,7 @@ class DataGrabber():
         data_converted  = []
         for i in data['candles']:
             data_converted.append([i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o']])
+            #data_converted.append([i['volume'], i['time'],i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o']])
         return data_converted
 
 
@@ -44,13 +46,47 @@ class DataGrabber():
             wr = csv.writer(fp, dialect='excel')
             for i in range(len(x)):
                 wr.writerow(x[i])
-    
 
+    def totensor(self, data):
+        data = torch.from_numpy(data)
+        return data
+
+    def batcher(self, x, y, batch_size):
+        x_data = list()
+        return x_data
+
+    def toarray(self, x):
+        x = np.array(x, dtype=np.float32)
+        return x
+
+    def process_to_normalized(self):
+        data = self.get_candles('2016-01-01T00:00:00Z', 1, "M1", "EUR_USD")
+        data = self.data_converted(data)
+        data = self.toarray(data)
+        data = self.normalize(data)
+        return data
+
+    def process_to_tensor(self):
+        data = self.get_candles('2016-01-01T00:00:00Z', 1, "M1", "EUR_USD")
+        data = self.data_converted(data)
+        data = self.toarray(data)
+        data = self.normalize(data)
+        data = self.totensor(data)
+        return data
+
+
+    
+dates = ["2016", "2017", "2018"]
 test = DataGrabber()
-candles = test.get_candles("2016-01-01T00:00:00Z", 1440, "M1", "EUR_USD")
+candles = test.get_candles(dates[0]+'-01-01T00:00:00Z', 2880, "M1", "EUR_USD")
 some_data = test.data_converted(candles)
-print(some_data)
-print(len(some_data))
+some_data = test.toarray(some_data)
+some_data = test.normalize(some_data)
+#some_data = test.totensor(some_data)
+data_day = some_data[0:1440]
+print(len(data_day))
+#print(len(some_data))
+#print(candles)
 
 
 
