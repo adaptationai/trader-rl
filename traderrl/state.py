@@ -17,28 +17,54 @@ class MarketSim():
         self.day = ['01']
         self.month = ['01']
         self.state = None
-
+        self.state_full = None
+        self.state_current = None
+        self.price = None
+        self.count = 0
     
     def make_episode(self):
-        self.state = self.data_grabber.process_to_normalized()
+        self.state_full = self.data_grabber.process_to_array()
 
 
     def make_current_state(self, count):
         start = (0+count)
         end = (1440+count)
-        state = self.state[start:end]
-        return state
+        self.state = self.state_full[start:end]
+        return self.state
 
-    def step(self):
-        state = self.state
+    def get_price(self):
+        self.state_current = self.state[-1:]
+        self.price = self.state_current[0]
+
+    def step(self, action):
+        self.state = self.make_current_state()
         
-        return state
+        action = action
+        reward = self.env.reward(self.action)
+        done = True
+        info = None
+        self.count += 1
+        return self.state, self.reward, self.done, self.info
 
 
     def reset(self):
-        pass
+        self.count = 0
+        self.make_episode()
+        self.state = self.make_current_state(self.count)
+        self.get_price()
+        self.player.user_action()
+        self.player.render()
+
+    def render(self):
+        print(f' State:{self.state}')
+        
+
 
 class MarketLive():
     def __init__(self):
         pass
 
+
+
+test = MarketSim()
+test.reset()

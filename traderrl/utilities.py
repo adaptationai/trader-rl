@@ -6,6 +6,10 @@ import oandapyV20.endpoints.instruments as instruments
 from sklearn import preprocessing
 import csv
 import torch
+import time
+import cv2
+import mss
+import numpy
 
 
 class DataGrabber():
@@ -60,33 +64,66 @@ class DataGrabber():
         return x
 
     def process_to_normalized(self):
-        data = self.get_candles('2016-01-01T00:00:00Z', 1, "M1", "EUR_USD")
+        data = self.get_candles('2016-01-01T00:00:00Z', 2880, "M1", "EUR_USD")
         data = self.data_converted(data)
         data = self.toarray(data)
         data = self.normalize(data)
         return data
 
+    def process_to_array(self):
+        data = self.get_candles('2016-01-01T00:00:00Z', 2880, "M1", "EUR_USD")
+        data = self.data_converted(data)
+        data = self.toarray(data)
+        return data
+
     def process_to_tensor(self):
-        data = self.get_candles('2016-01-01T00:00:00Z', 1, "M1", "EUR_USD")
+        data = self.get_candles('2016-01-01T00:00:00Z', 2880, "M1", "EUR_USD")
         data = self.data_converted(data)
         data = self.toarray(data)
         data = self.normalize(data)
         data = self.totensor(data)
         return data
 
+    def get_screen(self):
+        with mss.mss() as sct:
+            # Part of the screen to capture
+            monitor = {"top": 40, "left": 0, "width": 800, "height": 640}
+
+            while "Screen capturing":
+                last_time = time.time()
+
+                # Get raw pixels from the screen, save it to a Numpy array
+                img = numpy.array(sct.grab(monitor))
+
+                # Display the picture
+                #cv2.imshow("OpenCV/Numpy normal", img)
+
+                # Display the picture in grayscale
+                # cv2.imshow('OpenCV/Numpy grayscale',
+                #            cv2.cvtColor(img, cv2.COLOR_BGRA2GRAY))
+
+                print("fps: {}".format(1 / (time.time() - last_time)))
+
+                # Press "q" to quit
+                if cv2.waitKey(25) & 0xFF == ord("q"):
+                    cv2.destroyAllWindows()
+                    break
+
 
     
-dates = ["2016", "2017", "2018"]
-test = DataGrabber()
-candles = test.get_candles(dates[0]+'-01-01T00:00:00Z', 2880, "M1", "EUR_USD")
-some_data = test.data_converted(candles)
-some_data = test.toarray(some_data)
-some_data = test.normalize(some_data)
+#dates = ["2016", "2017", "2018"]
+#test = DataGrabber()
+#candles = test.get_candles(dates[0]+'-01-01T00:00:00Z', 2, "M1", "EUR_USD")
+#some_data = test.data_converted(candles)
+#some_data = test.toarray(some_data)
+#some_data = test.normalize(some_data)
 #some_data = test.totensor(some_data)
-data_day = some_data[0:1440]
-print(len(data_day))
+#data_day = some_data[0:1440]
+#print(len(data_day))
 #print(len(some_data))
 #print(candles)
+#print(some_data)
+#test.get_screen()
 
 
 
