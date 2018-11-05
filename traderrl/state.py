@@ -34,17 +34,22 @@ class MarketSim():
 
     def get_price(self):
         self.state_current = self.state[-1:]
-        self.price = self.state_current[0]
+        self.price = self.state_current[0][0]
 
-    def step(self, action):
-        self.state = self.make_current_state()
-        
-        action = action
-        reward = self.env.reward(self.action)
-        done = True
-        info = None
+    def step(self):
+        #self.state = self.make_current_state(self.count)
+        self.get_price()
+        self.render()
+        self.player.render()
+        self.player.action(self.price)
+        self.player.update(self.price)
+        #action = action
+        #reward = self.env.reward(self.action)
+        #done = True
+        #info = None
         self.count += 1
-        return self.state, self.reward, self.done, self.info
+        self.make_current_state(self.count)
+        #return self.state, self.reward, self.done, self.info
 
 
     def reset(self):
@@ -52,11 +57,17 @@ class MarketSim():
         self.make_episode()
         self.state = self.make_current_state(self.count)
         self.get_price()
-        self.player.user_action()
+        print(self.price)
+        self.player.update(self.price)
+        self.render()
         self.player.render()
+        self.player.action(self.price)
 
     def render(self):
-        print(f' State:{self.state}')
+        #print(f' State:{self.state}')
+        print(f' Price:{self.price}')
+        #print(f' State:{self.state}')
+        #print(f' State:{self.state}')
         
 
 
@@ -68,3 +79,5 @@ class MarketLive():
 
 test = MarketSim()
 test.reset()
+for step in range(len(test.state)):
+    test.step()
