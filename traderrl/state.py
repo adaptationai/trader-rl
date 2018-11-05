@@ -1,8 +1,8 @@
-import numpy as numpy
+import numpy as np
 from utilities import DataGrabber
 import torch
 from player import Player
-
+import numpy
 class MarketSim():
     def __init__(self):
         self.love = 14
@@ -57,17 +57,17 @@ class MarketSim():
         self.make_episode()
         self.state = self.make_current_state(self.count)
         self.get_price()
-        print(self.price)
+        #print(self.price)
         self.player.update(self.price)
-        self.render()
-        self.player.render()
-        self.player.action(self.price)
 
     def render(self):
         #print(f' State:{self.state}')
-        print(f' Price:{self.price}')
-        #print(f' State:{self.state}')
-        #print(f' State:{self.state}')
+        print(f'Price:{self.price}')
+        print(f'Count:{self.count}')
+
+
+    def state_maker(self):
+        return self.data_grabber.flatten()
         
 
 
@@ -79,5 +79,8 @@ class MarketLive():
 
 test = MarketSim()
 test.reset()
+#print(test.state[0])
+#k = test.state_maker()
+#print(len(k))
 for step in range(len(test.state)):
     test.step()

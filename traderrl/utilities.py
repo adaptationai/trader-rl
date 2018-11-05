@@ -84,6 +84,25 @@ class DataGrabber():
         data = self.totensor(data)
         return data
 
+    def flatten_full(self, market, user):
+        market = data
+
+        x = list()
+        for i in range(len(old_data)):
+            con = np.concatenate((data), axis=None)
+            con = np.concatenate((con, old_data[i][1]), axis=None)
+            con[0].tolist()
+            x.append(con)
+        return x
+
+    def flatten(self, u, m):
+        u = np.concatenate((u), axis=None)
+        m = np.concatenate((m), axis=None)
+        flattened = np.concatenate((m, u), axis=None)
+
+        #k = self.data_grabber.flatten(market_details, player_details)
+        return flattened
+
     def get_screen(self):
         with mss.mss() as sct:
             # Part of the screen to capture

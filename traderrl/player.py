@@ -1,15 +1,16 @@
-import numpy as numpy
+import numpy as np
 from utilities import DataGrabber
 import torch
-
+import numpy
 class Player():
     def __init__(self):
-        self.balance = 1000
-        self.net_balance = 1000
+        self.balance = 0
         self.placement = 0
         self.positions = []
         self.m_price = None
-        self.difference= 0.00002
+        self.pip = 0.0002
+        self.pips = 0
+        self.pips_net = 0
         #self.actions = [self.open_position_long(self.m_price), self.open_position_short(self.m_price), self.close_position(self.m_price), self.hold_position(self.m_price)]
         
 
@@ -18,18 +19,19 @@ class Player():
         self.m_price = m_price
         self.update_placement(self.m_price)
         self.update_net_balance(self.m_price)
+        self.pips = (self.balance * 1000)
+        self.pips_net = (self.net_balance * 1000)
         
 
     def open_position_long(self, m_price):
-        #if len(self.positions) == 0:
-        self.positions.append([(m_price - self.difference), 1])
-        #self.net_balance += -0.00002
+        if len(self.positions) == 0:
+            self.positions.append([(m_price - self.pip), 1])
+        
     
     def open_position_short(self, m_price):
         if len(self.positions) == 0:
+            self.positions.append([(m_price - self.pip), -1])
             
-            self.positions.append([(m_price - self.difference), -1])
-            #self.net_balance += -0.00002
     
     def close_position(self, m_price):
         print(len(self.positions))
@@ -60,14 +62,6 @@ class Player():
         
 
     def update_net_balance(self, m_price):
-        #if len(self.positions) == 1:
-           #pos = self.positions[0]
-            #price = pos[0]
-            #if pos[1] == 1:
-                #profit = price - m_price 
-            #else:
-                #profit = price + m_price
-
         self.net_balance = self.balance + self.placement
 
     def action(self, m_price):
@@ -86,12 +80,17 @@ class Player():
         else:
             self.hold_position(m_price)
 
-    def details(self):
-        self.update()
-        return [self.balance, self.net_balance, self.placement, self.self.postions[0]]
+    def details(self, m_price):
+        self.update(m_price)
+        if len(self.positions) == 1:
+            return [self.balance, self.net_balance, self.placement, self.self.postions[0]]
+        else:
+            return [self.balance, self.net_balance, self.placement, [0,0]]
+        
 
     def render(self):
         print(f'Player Details')
+        print(f'Pips: {self.balance}')
         print(f'Balance: {self.balance}')
         print(f'Net_balance: {self.net_balance}')
         print(f'Placement:: {self.placement}')
