@@ -58,7 +58,7 @@ class Agent():
         # Initialize time step (for updating every UPDATE_EVERY steps)
         self.t_step = 0
     
-    def step(self, state, action, reward, next_state, done, count):
+    def step(self, state, action, reward, next_state, done):
         # Save experience in replay memory
         self.memory.add(state, action, reward, next_state, done)
         
@@ -68,7 +68,7 @@ class Agent():
             # If enough samples are available in memory, get random subset and learn
             if len(self.memory) > BATCH_SIZE:
                 experiences = self.memory.sample()
-                self.learn(experiences, GAMMA, count)
+                self.learn(experiences, GAMMA)
 
     def act(self, state, eps=0.):
         """Returns actions for given state as per current policy.
@@ -92,7 +92,7 @@ class Agent():
                 return random.choice(np.arange(self.action_size))
 
     
-    def learn(self, experiences, gamma, count):
+    def learn(self, experiences, gamma):
         """Update value parameters using given batch of experience tuples.
         Params
         ======

@@ -4,7 +4,7 @@ from collections import deque
 from agent import Agent
 from env import Template
 
-env = Template()
+env = Template("trader")
 
 
 class DQN():
@@ -20,9 +20,9 @@ class DQN():
             self.agent.qnetwork_target.load_state_dict(torch.load(self.saved_network))
             print('Loaded.')
 
-    def train(self, n_episodes=2000, max_t=1000, eps_start=1.0,
+    def train(self, n_episodes=100, max_t=1440, eps_start=1.0,
               eps_end=0.01, eps_decay=0.995,
-              score_window_size=100, target_score=13.0,
+              score_window_size=100, target_score=100.0,
               save=True,
               verbose=True):
         """Deep Q-Learning.
@@ -44,7 +44,7 @@ class DQN():
             score = 0
             for t in range(max_t):
                 action = self.agent.act(state, eps)
-                next_state, reward, done, _ = self.env.step(action)
+                next_state, reward, done = self.env.step(action)
                 self.agent.step(state, action, reward, next_state, done)
                 state = next_state
                 score += reward
@@ -54,7 +54,7 @@ class DQN():
             scores.append(score)  # save most recent score
             eps = max(eps_end, eps_decay * eps)  # decrease epsilon
             avg_score = np.mean(scores_window)
-            if avg_score>13.0 and not save12 and not self.load_net:
+            if avg_score>100 and not save12 and not self.load_net:
                 torch.save(self.agent.qnetwork_local.state_dict(), self.saved_network)
                 np.save('scores13_0824.npy', np.array(scores))
                 save12 = True
@@ -97,4 +97,5 @@ class DQN():
                     break
         #self.env.close()
 
-training = DQN("name", state_size, 4, env, load_net=False)
+training = DQN("name", 5765, 4, env, load_net=False)
+training.train()

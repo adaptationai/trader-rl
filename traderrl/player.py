@@ -38,7 +38,7 @@ class Player():
             self.reward = 0
     
     def close_position(self, m_price):
-        print(len(self.positions))
+        #print(len(self.positions))
         if len(self.positions) == 1:
             pos = self.positions[0]
             p_price = pos[0]
@@ -106,7 +106,7 @@ class Player():
     def details(self, m_price):
         self.update(m_price)
         if len(self.positions) == 1:
-            return [self.balance, self.net_balance, self.placement, self.self.postions[0]]
+            return [self.balance, self.net_balance, self.placement, self.positions[0]]
         else:
             return [self.balance, self.net_balance, self.placement, [0,0]]
         

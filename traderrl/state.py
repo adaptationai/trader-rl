@@ -39,13 +39,14 @@ class MarketSim():
     def step(self, action):
         #self.state = self.make_current_state(self.count)
         self.get_price()
-        self.render()
-        self.player.render()
+        #self.render()
+        #self.player.render()
         self.player.action(self.price, action)
+        #self.player.action_user(self.price)
         self.player.update(self.price)
         self.count += 1
         self.make_current_state(self.count)
-        state = self.state_maker
+        state = self.state_maker()
         reward = self.reward()
         done = self.done(self.count)
         
@@ -70,7 +71,7 @@ class MarketSim():
 
 
     def state_maker(self):
-        user = self.player.details()
+        user = self.player.details(self.price)
         market = self.state
         state = self.data_grabber.flatten(user, market)
         return state
@@ -95,10 +96,10 @@ class MarketLive():
 
 
 
-test = MarketSim()
-test.reset()
+#test = MarketSim()
+#test.reset()
 #print(test.state[0])
 #k = test.state_maker()
 #print(len(k))
-for step in range(len(test.state)):
-    test.step()
+#for step in range(len(test.state)):
+    #test.step(1)

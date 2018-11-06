@@ -14,6 +14,7 @@ class Template():
     def reset(self):
         """Reset the environment."""
         #info = self.env.reset(train_mode=True)[self.brain_name]
+        self.env = MarketSim()
         state = self.env.reset()
         return state
 
@@ -29,3 +30,12 @@ class Template():
         """
         self.env.render()
         self.env.player.render()
+
+#test = Template("trader-rl")
+#state = test.reset()
+#print(len(state))
+#print(test.state[0])
+#k = test.state_maker()
+#print
+#for step in range(len(test.env.state)):
+    #test.step(1)
