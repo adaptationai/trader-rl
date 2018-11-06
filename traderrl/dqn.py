@@ -2,6 +2,9 @@ import torch
 import numpy as np
 from collections import deque
 from agent import Agent
+from env import Template
+
+env = Template()
 
 
 class DQN():
@@ -92,4 +95,6 @@ class DQN():
                 if done:
                     print('Done.')
                     break
-        self.env.close()
+        #self.env.close()
+
+training = DQN("name", state_size, 4, env, load_net=False)

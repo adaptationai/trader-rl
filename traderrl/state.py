@@ -36,20 +36,20 @@ class MarketSim():
         self.state_current = self.state[-1:]
         self.price = self.state_current[0][0]
 
-    def step(self):
+    def step(self, action):
         #self.state = self.make_current_state(self.count)
         self.get_price()
         self.render()
         self.player.render()
-        self.player.action(self.price)
+        self.player.action(self.price, action)
         self.player.update(self.price)
-        #action = action
-        #reward = self.env.reward(self.action)
-        #done = True
-        #info = None
         self.count += 1
         self.make_current_state(self.count)
-        #return self.state, self.reward, self.done, self.info
+        state = self.state_maker
+        reward = self.reward()
+        done = self.done(self.count)
+        
+        return state, reward, done
 
 
     def reset(self):
@@ -59,15 +59,33 @@ class MarketSim():
         self.get_price()
         #print(self.price)
         self.player.update(self.price)
+        state = self.state_maker()
+        return state
 
     def render(self):
         #print(f' State:{self.state}')
         print(f'Price:{self.price}')
         print(f'Count:{self.count}')
+        print(f'Reward:{self.player.reward}')
 
 
     def state_maker(self):
-        return self.data_grabber.flatten()
+        user = self.player.details()
+        market = self.state
+        state = self.data_grabber.flatten(user, market)
+        return state
+
+    def reward(self):
+
+        return self.player.reward
+    
+    def done(self, count):
+        if count == 1439:
+            return True
+        else:
+            return False 
+
+    
         
 
 
