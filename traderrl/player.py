@@ -27,8 +27,8 @@ class Player():
         #difference = am_price - bm_price
         #self.diff = difference * 10000
         #print(self.diff)
-        self.update_placement(self.m_price)
-        self.update_net_balance(self.m_price)
+        self.update_placement(m_price)
+        self.update_net_balance(m_price)
         self.pips = self.balance * 10000
         self.pips_net = self.net_balance * 10000
         #self.reward = 0
@@ -55,6 +55,7 @@ class Player():
     
     def close_position(self, m_price):
         #print(len(self.positions))
+        self.update(m_price)
         if len(self.positions) == 1:
             pos = self.positions[0]
             p_price = pos[0]
@@ -64,11 +65,15 @@ class Player():
             if pos[1] == -1:
                 close = m_price + self.half_spread
                 profit = p_price - close
-
-            self.balance = self.balance + profit
+            #print('m_price')
+            #print(m_price)
+            #print('placement')
+            #print(self.placement)
+            self.reward = self.placement * 10000
+            self.balance = self.balance + self.placement
             self.positions = []
             self.placement = 0
-            self.reward = profit * 10000
+            #self.reward = profit * 10000
             #elf.update()
         else:
             self.reward = 0
@@ -82,10 +87,12 @@ class Player():
             pos = self.positions[0]
             p_price = pos[0]
             if pos[1] == 1:
-                profit = m_price - p_price
+                close = m_price - self.half_spread
+                profit = close - p_price 
             if pos[1] == -1:
-                profit = p_price - m_price
-
+                close = m_price + self.half_spread
+                profit = p_price - close
+            
             self.placement = profit
         
 
@@ -133,6 +140,7 @@ class Player():
         
 
     def render(self):
+        #self.update(self.m_price)
         print(f'Player Details')
         print(f'Pips: {self.pips}')
         print(f'Pips_net: {self.pips_net}')
