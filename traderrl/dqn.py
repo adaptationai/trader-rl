@@ -20,7 +20,7 @@ class DQN():
             self.agent.qnetwork_target.load_state_dict(torch.load(self.saved_network))
             print('Loaded.')
 
-    def train(self, n_episodes=100, max_t=1440, eps_start=1.0,
+    def train(self, n_episodes=100000, max_t=1440, eps_start=1.0,
               eps_end=0.01, eps_decay=0.995,
               score_window_size=100, target_score=100.0,
               save=True,
@@ -48,7 +48,10 @@ class DQN():
                 self.agent.step(state, action, reward, next_state, done)
                 state = next_state
                 score += reward
+                #if reward != 0:
+                    #print(reward)
                 if done:
+                    #print('done')
                     break
             scores_window.append(score)  # save most recent score
             scores.append(score)  # save most recent score
@@ -66,6 +69,9 @@ class DQN():
                 if save:
                     torch.save(self.agent.qnetwork_local.state_dict(), self.saved_network)
                 break
+            if i_episode % 1 == 0:
+                torch.save(self.agent.qnetwork_local.state_dict(), self.saved_network)
+                np.save('scores13_0824.npy', np.array(scores))
 
             if verbose:
                 print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_window)), end="")
@@ -77,7 +83,7 @@ class DQN():
 
         return scores
 
-    def play(self, trials=3, steps=200, load=False):
+    def play(self, trials=100, steps=1440, load=True):
         if load:
             self.agent.qnetwork_local.load_state_dict(torch.load(self.saved_network))
 
@@ -88,7 +94,7 @@ class DQN():
             for j in range(steps):
                 action = self.agent.act(state)
                 self.env.render()
-                state, reward, done, _ = self.env.step(action)
+                state, reward, done = self.env.step(action)
                 total_reward += reward
                 if reward!=0:
                     print("Current Reward:", reward, "Total Reward:", total_reward)
@@ -97,5 +103,6 @@ class DQN():
                     break
         #self.env.close()
 
-training = DQN("name", 5765, 4, env, load_net=False)
+training = DQN("name", 5766, 4, env, load_net=False)
 training.train()
+#training.play()

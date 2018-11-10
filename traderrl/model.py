@@ -11,7 +11,7 @@ from torch.autograd import Variable
 
     
 class DQN(nn.Module):
-    def __init__(self, input_dims, output_dims, seed,  hidden_dim=64):
+    def __init__(self, input_dims, output_dims, seed,  hidden_dim=128):
         """Initialize parameters and build model.
         Params
         ======

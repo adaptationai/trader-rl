@@ -21,6 +21,8 @@ class Template():
     def step(self, action):
         """Take a step in the environment."""
         state, reward, done = self.env.step(action)
+        #print(done)
+
         return state, reward, done
 
     def render(self):
@@ -31,11 +33,11 @@ class Template():
         self.env.render()
         self.env.player.render()
 
-#test = Template("trader-rl")
-#state = test.reset()
+test = Template("trader-rl")
+state = test.reset()
 #print(len(state))
-#print(test.state[0])
+#print(test.env.state[0])
 #k = test.state_maker()
 #print
-#for step in range(len(test.env.state)):
-    #test.step(1)
+for step in range(len(test.env.state)):
+    test.step(1440)

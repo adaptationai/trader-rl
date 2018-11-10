@@ -20,6 +20,14 @@ class DataGrabber():
         self.love = 14
         self.auth = Auth()
         self.client = oandapyV20.API(access_token=self.auth.access_token)
+        self.years = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008']
+        self.instrument = ['EUR_USD']
+        self.time = ['00:00:00']
+        self.hour = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
+        self.minute = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32','33','34', '35', '36', '37', '38','39','40','41','42','43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59']
+        self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28']
+        self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+        self.granularity= ['M1', 'M5', 'M15', 'M30', 'H1', 'H4'] 
 
     def get_candles(self, _from,  count, granularity, instrument):
         params = {"from": _from, "count": count, "granularity": granularity}
@@ -64,16 +72,27 @@ class DataGrabber():
         return x
 
     def process_to_normalized(self):
-        data = self.get_candles('2016-01-01T00:00:00Z', 2880, "M1", "EUR_USD")
+        year = random.choice(self.years)
+        data = self.get_candles(year+'-01-01T00:00:00Z', 2880, "M1", "EUR_USD")
         data = self.data_converted(data)
         data = self.toarray(data)
         data = self.normalize(data)
         return data
 
     def process_to_array(self):
+        year = random.choice(self.years)
+        day = random.choice(self.day)
+        month = random.choice(self.month)
+        hour = random.choice(self.hour)
+        minute = random.choice(self.minute)
+        #data = self.get_candles(year+'-'+month+'-'+day+'T'+hour+':'+minute+':00Z', 2880, "M1", "EUR_USD")
         data = self.get_candles('2016-01-01T00:00:00Z', 2880, "M1", "EUR_USD")
         data = self.data_converted(data)
         data = self.toarray(data)
+        np.save('state.npy', data)
+        #data = self.difference(data)
+        
+        #print(difference)
         return data
 
     def process_to_tensor(self):
@@ -95,10 +114,11 @@ class DataGrabber():
             x.append(con)
         return x
 
-    def flatten(self, u, m):
+    def flatten(self, u, m, c):
         u = np.concatenate((u), axis=None)
         m = np.concatenate((m), axis=None)
-        flattened = np.concatenate((m, u), axis=None)
+        c = np.concatenate((c), axis=None)
+        flattened = np.concatenate((m, u, c), axis=None)
 
         #k = self.data_grabber.flatten(market_details, player_details)
         return flattened
@@ -127,7 +147,26 @@ class DataGrabber():
                 if cv2.waitKey(25) & 0xFF == ord("q"):
                     cv2.destroyAllWindows()
                     break
+    def difference(self, state):
+        new_state = []
+        r = 2879
+        for i in range(2879):
+            before = state[i][0]
+            b = i+1
+            after = state[b][0]
+            diff = after - before
+        
+            new_state.append([after, diff])
+        return new_state
 
+    def load_state(self):
+        data = np.load('state.npy')
+        return data
+
+    
+    
+
+    
 
     
 #dates = ["2016", "2017", "2018"]

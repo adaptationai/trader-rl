@@ -3,27 +3,27 @@ from utilities import DataGrabber
 import torch
 from player import Player
 import numpy
+import random
 class MarketSim():
     def __init__(self):
         self.love = 14
         self.player = Player()
         self.actions = [1,2,3,4]
-        self.years = ['2000', '2001', '2002']
-        self.count = [1440, 2880]
-        self.granularity= ['M1', 'M5', 'M15', 'M30', 'H1', 'H4'] 
-        self.instrument = ['EUR_USD']
+        #self.count = [1440, 2880]
         self.data_grabber = DataGrabber()
-        self.time = ['00:00:00']
-        self.day = ['01']
-        self.month = ['01']
         self.state = None
         self.state_full = None
         self.state_current = None
         self.price = None
         self.count = 0
+        self.diff = 0
+        self.load = False
     
     def make_episode(self):
-        self.state_full = self.data_grabber.process_to_array()
+        if self.load == True:
+            self.state_full = self.data_grabber.load_state()
+        else:
+            self.state_full = self.data_grabber.process_to_array()
 
 
     def make_current_state(self, count):
@@ -35,37 +35,74 @@ class MarketSim():
     def get_price(self):
         self.state_current = self.state[-1:]
         self.price = self.state_current[0][0]
+    
+    def get_diff(self):
+        self.state_current = self.state[-1:]
+        self.diff = self.state_current[0][1]
 
     def step(self, action):
         #self.state = self.make_current_state(self.count)
+        
+        #print(self.price)
+        #print(self.diff)
+        
+        self.render()
+        self.player.render()
+    
+        print('-')
+        
+        #self.player.action(self.price, action)
+        #self.get_price()
+        self.player.action_user(self.price)
         self.get_price()
-        #self.render()
-        #self.player.render()
-        self.player.action(self.price, action)
-        #self.player.action_user(self.price)
         self.player.update(self.price)
         self.count += 1
+        if self.count == 1440:
+            self.player.close_position(self.price)
+        self.reward = self.player.reward
+        print(self.reward)
         self.make_current_state(self.count)
+        #state_diff = self.difference(self.state)
+        #self.state = state_diff
+        
         state = self.state_maker()
-        reward = self.reward()
+        #self.get_price()
+        #self.player.update(self.price)
+        #self.get_price()
+        #self.get_diff()
+        
+        #state = self.data_grabber.scaled(state)
+        
+        #reward = int(reward)
+        #if reward != 0:
+            #self.render()
+            #self.player.render()
         done = self.done(self.count)
         
-        return state, reward, done
+        return state, self.reward, done
 
 
     def reset(self):
         self.count = 0
         self.make_episode()
         self.state = self.make_current_state(self.count)
-        self.get_price()
+        #self.get_price()
+        #self.get_diff()
         #print(self.price)
-        self.player.update(self.price)
+        #self.player.update(self.price)
+        #state_diff = self.difference(self.state)
+        #self.state = state_diff
         state = self.state_maker()
+        self.get_price()
+        #self.get_diff()
+        self.player.update(self.price)
+        #state = self.data_grabber.scaled(state)
         return state
 
     def render(self):
         #print(f' State:{self.state}')
         print(f'Price:{self.price}')
+        #print(f'diff:{self.diff}')
         print(f'Count:{self.count}')
         print(f'Reward:{self.player.reward}')
 
@@ -73,7 +110,9 @@ class MarketSim():
     def state_maker(self):
         user = self.player.details(self.price)
         market = self.state
-        state = self.data_grabber.flatten(user, market)
+        count = np.array([self.count])
+        state = self.data_grabber.flatten(user, market, count)
+        #state = self.data_grabber.scaled(state)
         return state
 
     def reward(self):
@@ -81,10 +120,25 @@ class MarketSim():
         return self.player.reward
     
     def done(self, count):
-        if count == 1439:
+        if count == 1440:
+            #self.render()
+            #self.player.render()
             return True
         else:
             return False 
+
+    def difference(self, state):
+        new_state = []
+        r = 1439
+        for i in range(1439):
+            before = state[i][0]
+            b = i+1
+            after = state[b][0]
+            diff = after - before
+        
+            new_state.append([after, diff])
+        return new_state
+
 
     
         

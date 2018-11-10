@@ -8,17 +8,25 @@ class Player():
         self.net_balance = 0
         self.placement = 0
         self.positions = []
-        self.m_price = None
+        self.m_price = 0
         self.pip = 0.0002
         self.pips = 0
         self.pips_net = 0
         self.reward = 0
+        self.spread = 0.0002
+        self.half_spread = 0.0001
+        self.diff = 0
         #self.actions = [self.open_position_long(self.m_price), self.open_position_short(self.m_price), self.close_position(self.m_price), self.hold_position(self.m_price)]
         
 
 
     def update(self, m_price):
+        #bm_price = self.m_price
         self.m_price = m_price
+        #am_price = self.m_price 
+        #difference = am_price - bm_price
+        #self.diff = difference * 10000
+        #print(self.diff)
         self.update_placement(self.m_price)
         self.update_net_balance(self.m_price)
         self.pips = self.balance * 10000
@@ -28,13 +36,21 @@ class Player():
 
     def open_position_long(self, m_price):
         if len(self.positions) == 0:
-            self.positions.append([(m_price - self.pip), 1])
+            buy = m_price + self.half_spread
+            self.positions.append([(buy), 1])
+            #self.pips += -2
+            self.reward = 0
+        else:
             self.reward = 0
         
     
     def open_position_short(self, m_price):
         if len(self.positions) == 0:
-            self.positions.append([(m_price - self.pip), -1])
+            sell = m_price - self.half_spread
+            self.positions.append([(sell), -1])
+            #self.pips += -2
+            self.reward = 0
+        else:
             self.reward = 0
     
     def close_position(self, m_price):
@@ -43,14 +59,19 @@ class Player():
             pos = self.positions[0]
             p_price = pos[0]
             if pos[1] == 1:
-                profit = m_price - p_price 
+                close = m_price - self.half_spread
+                profit = close - p_price 
             if pos[1] == -1:
-                profit = p_price - m_price
+                close = m_price + self.half_spread
+                profit = p_price - close
 
             self.balance = self.balance + profit
             self.positions = []
             self.placement = 0
             self.reward = profit * 10000
+            #elf.update()
+        else:
+            self.reward = 0
     
     def hold_position(self, m_price):
         #pass
@@ -73,7 +94,7 @@ class Player():
 
     def action_user(self, m_price):
         #print(len)
-        self.update(m_price)
+        #self.update(m_price)
         x = input('buy, sell, close, hold?:')
         x = str(x)
         if x == "buy":
@@ -89,7 +110,7 @@ class Player():
 
     def action(self, m_price, action):
         #print(len)
-        self.update(m_price)
+        #self.update(m_price)
         x = action
         x = int(x)
         if x == 0:
@@ -104,7 +125,7 @@ class Player():
             self.hold_position(m_price)
 
     def details(self, m_price):
-        self.update(m_price)
+        #self.update(m_price)
         if len(self.positions) == 1:
             return [self.balance, self.net_balance, self.placement, self.positions[0]]
         else:
