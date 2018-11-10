@@ -55,8 +55,9 @@ class MarketSim():
         
         #self.player.action(self.price, action)
         self.get_price()
-        print(self.price)
-        self.player.action_user(self.price)
+        self.player.action(self.price, action)
+        #print(self.price)
+        #self.player.action_user(self.price)
         #print(self.price)
         #self.get_price()
         print(self.price)
