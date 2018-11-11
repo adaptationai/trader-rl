@@ -33,11 +33,11 @@ class Template():
         self.env.render()
         self.env.player.render()
 
-test = Template("trader-rl")
-state = test.reset()
+#test = Template("trader-rl")
+#state = test.reset()
 #print(len(state))
 #print(test.env.state[0])
 #k = test.state_maker()
 #print
-for step in range(len(test.env.state)):
-    test.step(1440)
+#for step in range(len(test.env.state)):
+    #test.step(1440)

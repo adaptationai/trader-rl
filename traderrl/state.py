@@ -28,7 +28,7 @@ class MarketSim():
 
     def make_current_state(self, count):
         start = (0+count)
-        end = (1440+count)
+        end = (10+count)
         self.state = self.state_full[start:end]
         return self.state
 
@@ -63,8 +63,8 @@ class MarketSim():
         #print(self.price)
         #self.player.update(self.price)
         
-        #if self.count == 1440:
-            #self.player.close_position(self.price)
+        if self.count == 1440:
+            self.player.close_position(self.price)
         self.reward = self.player.reward
         #print(self.reward)
         self.make_current_state(self.count)
@@ -119,6 +119,7 @@ class MarketSim():
     def state_maker(self):
         user = self.player.details(self.price)
         market = self.state
+        #market = np.array([self.price])
         count = np.array([self.count])
         state = self.data_grabber.flatten(user, market, count)
         #state = self.data_grabber.scaled(state)

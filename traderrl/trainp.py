@@ -33,7 +33,7 @@ def run_steps_2(agent):
     random_seed()
     config = agent.config
     save_path = '1000_update_trader_placement.bin'
-    agent.load(save_path)
+    #agent.load(save_path)
     while True:
         rewards = agent.rewards_deque
         if config.log_interval and not agent.total_steps % config.log_interval and len(agent.episode_rewards):            
@@ -67,7 +67,7 @@ class Trader(BaseTask):
         self.name = 'Trader'
         self.env = env
         self.action_dim = 4
-        self.state_dim = 2886
+        self.state_dim = 46
         
     def reset(self):
         state = self.env.reset()

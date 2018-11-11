@@ -103,6 +103,6 @@ class DQN():
                     break
         #self.env.close()
 
-training = DQN("name", 5766, 4, env, load_net=False)
+training = DQN("name", 46, 4, env, load_net=False)
 training.train()
 #training.play()
