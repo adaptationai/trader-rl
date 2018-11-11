@@ -5,7 +5,7 @@ from state import *
 class Template():
     """Base class for Unity ML environments using unityagents (v0.4)."""
 
-    def __init__(self, name, seed=0):
+    def __init__(self, name='trader', seed=0):
         self.seed = seed
         print('SEED: {}'.format(self.seed))
         self.env = MarketSim()

@@ -131,8 +131,8 @@ class MarketSim():
     
     def done(self, count):
         if count == 1440:
-            #self.render()
-            #self.player.render()
+            self.render()
+            self.player.render()
             return True
         else:
             return False 
