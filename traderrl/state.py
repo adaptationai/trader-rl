@@ -63,8 +63,8 @@ class MarketSim():
         #print(self.price)
         #self.player.update(self.price)
         
-        if self.count == 1440:
-            self.player.close_position(self.price)
+        #if self.count == 1440:
+            #self.player.close_position(self.price)
         self.reward = self.player.reward
         #print(self.reward)
         self.make_current_state(self.count)
