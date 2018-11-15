@@ -24,6 +24,9 @@ class Template(gym.Env):
         self.reward = None
         self.done = False
         self.state = None
+        self.action_dim = 4
+        self.state_dim = 26
+
 
         # forward or backward in each dimension
         self.action_space = spaces.Discrete(4)
@@ -31,7 +34,7 @@ class Template(gym.Env):
         # observation is the x, y coordinate of the grid
         #low = np.zeros(0, dtype=int)
         #high =  np.array(1, dtype=int) - np.ones(len(self.maze_size), dtype=int)
-        self.observation_space = spaces.Box(low=-10, high=10, shape=(46,))
+        self.observation_space = spaces.Box(low=-10, high=10, shape=(26,))
         #print("obs")
         #print (self.observation_space)
 

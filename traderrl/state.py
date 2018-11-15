@@ -55,6 +55,7 @@ class MarketSim():
         
         #self.player.action(self.price, action)
         self.get_price()
+        self.get_diff()
         self.player.action(self.price, action)
         #print(self.price)
         #self.player.action_user(self.price)
@@ -63,18 +64,19 @@ class MarketSim():
         #print(self.price)
         #self.player.update(self.price)
         
-        #if self.count == 1440:
-            #self.player.close_position(self.price)
+        if self.count == 1440:
+            self.player.close_position(self.price)
         self.reward = self.player.reward
         #print(self.reward)
         self.make_current_state(self.count)
         #state_diff = self.difference(self.state)
         #self.state = state_diff
-        
-        state = self.state_maker()
         self.get_price()
+        self.get_diff()
         #print(self.price)
         self.player.update(self.price)
+        state = self.state_maker()
+        
         
         #self.get_diff()
         
@@ -99,11 +101,12 @@ class MarketSim():
         #self.player.update(self.price)
         #state_diff = self.difference(self.state)
         #self.state = state_diff
-        state = self.state_maker()
         self.get_price()
-        
-        #self.get_diff()
+        self.get_diff()
+        #print(self.price)
         self.player.update(self.price)
+        state = self.state_maker()
+        
         #print(self.price)
         #state = self.data_grabber.scaled(state)
         return state

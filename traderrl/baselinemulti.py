@@ -31,7 +31,8 @@ num_cpu = 4  # Number of processes to use
 # Create the vectorized environment
 env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
 
-model = PPO2(MlpLnLstmPolicy, env, verbose=0)
+model = PPO2(MlpPolicy, env, verbose=1)
+#model = PPO2(MlpLnLstmPolicy, env, verbose=1)
 
 def evaluate(model, num_steps=1000):
     """
@@ -76,6 +77,7 @@ n_timesteps = 10000000
 start_time = time.time()
 model.learn(n_timesteps)
 total_time_multi = time.time() - start_time
+model.save("traderlstm.pkl")
 
 print("Took {:.2f}s for multiprocessed version - {:.2f} FPS".format(total_time_multi, n_timesteps / total_time_multi))
 

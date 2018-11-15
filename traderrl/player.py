@@ -69,8 +69,8 @@ class Player():
             #print(m_price)
             #print('placement')
             #print(self.placement)
-            self.reward = self.placement * 10000
-            self.balance = self.balance + self.placement
+            self.reward = profit * 10000
+            self.balance = self.balance + profit
             self.positions = []
             self.placement = 0
             #self.reward = profit * 10000

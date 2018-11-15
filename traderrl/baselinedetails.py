@@ -8,6 +8,15 @@ from template_env import Template
 env = Template()
 env = DummyVecEnv([lambda: env])
 
+from stable_baselines.deepq.policies import FeedForwardPolicy
+
+class CustomPolicy(FeedForwardPolicy):
+    def __init__(self, *args, **kwargs):
+        super(CustomPolicy, self).__init__(*args, **kwargs,
+                                           layers=[512,512],
+                                           layer_norm=True,
+                                            feature_extraction="mlp")
+
 def callback(lcl, _glb):
     """
     The callback function for logging and saving
@@ -20,7 +29,7 @@ def callback(lcl, _glb):
         mean_100ep_reward = -np.inf
     else:
         mean_100ep_reward = round(float(np.mean(lcl['episode_rewards'][-101:-1])), 1)
-    is_solved = lcl['step'] > 100 and mean_100ep_reward >= 199
+    is_solved = lcl['step'] > 100 and mean_100ep_reward >= 100
     return is_solved
 
 
@@ -32,16 +41,17 @@ def main(args):
     
 
     #env = gym.make('CartPole-v1')
-    model = DQN(MlpPolicy, env, verbose=0)
-    model.load("cartpole_model.pkl")
-    #model = DQN(
-        #env=env,
-        #policy=MlpPolicy,
-        #learning_rate=1e-3,
-        #buffer_size=50000,
-        #exploration_fraction=0.1,
-        #exploration_final_eps=0.02,
-    #)
+    #model = DQN(MlpPolicy, env, verbose=1)
+    #model.load("cartpole_model.pkl")
+    model = DQN(
+        env=env,
+        policy=CustomPolicy,
+        learning_rate=1e-3,
+        buffer_size=50000,
+        exploration_fraction=0.01,
+        exploration_final_eps=0.02,
+        verbose=1
+    )
     model.learn(total_timesteps=args.max_timesteps, callback=callback)
 
     print("Saving model to cartpole_model.pkl")
@@ -50,6 +60,6 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Train DQN on cartpole")
-    parser.add_argument('--max-timesteps', default=1000000, type=int, help="Maximum number of timesteps")
+    parser.add_argument('--max-timesteps', default=100000000, type=int, help="Maximum number of timesteps")
     args = parser.parse_args()
 main(args)

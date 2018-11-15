@@ -215,7 +215,7 @@ class _ProcessWrapper(mp.Process):
                 raise Exception('Unknown command')
 
 class ParallelizedTask:
-    def __init__(self, task_fn, num_workers, log_dir=None, single_process=False):
+    def __init__(self, task_fn, num_workers, log_dir='log', single_process=True):
         if single_process:
             self.tasks = [task_fn(log_dir=log_dir) for _ in range(num_workers)]
         else:

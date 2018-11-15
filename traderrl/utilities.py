@@ -91,7 +91,8 @@ class DataGrabber():
         data = self.data_converted(data)
         data = self.toarray(data)
         np.save('state.npy', data)
-        #data = self.difference(data)
+        data = self.difference(data)
+        np.save('state.npy', data)
         
         #print(difference)
         return data

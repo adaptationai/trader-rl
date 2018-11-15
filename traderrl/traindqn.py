@@ -24,10 +24,42 @@ from deep_rl import *
 import torch
 import numpy as np
 from collections import deque
-#from agent import Agent
-from env import Template
+#from agent import Agentfrom stable_baselines.common.vec_env import DummyVecEnv
+from stable_baselines.common.vec_env import DummyVecEnv
+#from stable_baselines.deepq import DQN, MlpPolicy
+from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
+from stable_baselines.common import set_global_seeds
+from template_env import Template
+#env = Template
+#env = DummyVecEnv([lambda: env])
 
-env = Template("trader")
+def make_env(env_id, rank, seed=0):
+    """
+    Utility function for multiprocessed env.
+    
+    :param env_id: (str) the environment ID
+    :param num_env: (int) the number of environment you wish to have in subprocesses
+    :param seed: (int) the inital seed for RNG
+    :param rank: (int) index of the subprocess
+    """
+    def _init():
+        env = Template()
+        env.seed(seed + rank)
+        return env
+    set_global_seeds(seed)
+    return _init
+
+#env_id = "CartPole-v1"
+#num_cpu = 4  # Number of processes to use
+# Create the vectorized environment
+#env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
+
+#model = PPO2(MlpPolicy, env, verbose=1)
+#model = PPO2(MlpLnLstmPolicy, env, verbose=1)
+
+
+
+#env = Template("trader")
 
 def run_steps_2(agent):
     random_seed()
@@ -65,9 +97,10 @@ class Trader(BaseTask):
     def __init__(self):
         BaseTask.__init__(self)
         self.name = 'Trader'
-        self.env = env
+        self.env = Template()
         self.action_dim = 4
-        self.state_dim = 2886
+        self.state_dim = 26
+        self.log_dir=None
         
     def reset(self):
         state = self.env.reset()
@@ -81,11 +114,11 @@ class Trader(BaseTask):
             #print('action')
             #print(action)
 
-        next_state, reward, done = self.env.step(action)
+        next_state, reward, done, info = self.env.step(action)
         #if reward != 0:
             #print(reward)
         next_state = np.array([next_state])
-        reward = np.array([reward])
+        reward = np.array([reward], dtype=np.int64)
         if done:
             done = 1
             done = np.array([done])
@@ -110,9 +143,20 @@ class Trader(BaseTask):
 def dqn_cart_pole():
     game = 'CartPole-v0'
     config = Config()
+    #task_fn = lambda: env()
+    #config.task_fn = task_fn
+    #config.eval_env = task_fn()
+
     task_fn = lambda: Trader()
+    #task_fn = lambda log_dir: Trader()
+    config.num_workers = 1
+    #config.task_fn = lambda: ParallelizedTask(task_fn, config.num_workers)
     config.task_fn = task_fn
+
     config.eval_env = task_fn()
+    #config.task_fn = lambda: ParallelizedTask(task_fn, config.num_workers)
+
+  
 
     config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
     #config.network_fn = lambda: VanillaNet(config.action_dim, FCBody(config.state_dim))
@@ -125,13 +169,13 @@ def dqn_cart_pole():
     config.discount = 0.99
     config.target_network_update_freq = 200
     config.exploration_steps = 1000
-    # config.double_q = True
-    config.double_q = False
+    config.double_q = True
+    #config.double_q = False
     config.sgd_update_frequency = 4
     config.gradient_clip = 5
     config.eval_interval = int(5e3)
     config.max_steps = 1e5
-    # config.async_actor = False
+    config.async_actor = False
     config.logger = get_logger()
     run_steps(DQNAgent(config))
 success, rwd_deque, rwd_all, model_path = dqn_cart_pole()
