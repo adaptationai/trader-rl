@@ -23,7 +23,7 @@ A Hierarchical Multi-Agent Deep Reinforcement Learning trading system.
 	```
 - Install requirements:
     ```bash
-    conda install --yes --file requirements.txt
+    pip install -r requirements.txt
 	```
 
 ## Instructions
