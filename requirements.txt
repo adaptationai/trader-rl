@@ -3,3 +3,4 @@ oandapyV20
 pyti
 numpy
 stable-baselines
+tensorflow-gpu
