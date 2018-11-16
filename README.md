@@ -32,4 +32,4 @@ A Hierarchical Multi-Agent Deep Reinforcement Learning trading system.
     ```bash
 	python .
 	```
-    Open results.ipynb and run code cells in order
+   

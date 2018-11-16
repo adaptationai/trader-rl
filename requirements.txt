@@ -2,3 +2,4 @@ v20
 oandapyV20
 pyti
 numpy
+stable-baselines
