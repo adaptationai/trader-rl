@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from auth import Auth
+from .auth import Auth
 import oandapyV20
 import oandapyV20.endpoints.instruments as instruments
 from sklearn import preprocessing
@@ -104,6 +104,18 @@ class DataGrabber():
         data = self.normalize(data)
         data = self.totensor(data)
         return data
+        
+    def array_2d(self, data):
+        price = list()
+        difference = list()
+        for i in range(len(data)):
+            price.append(data[i][0])
+            difference.append(data[i][i])
+            price = np.array(price)
+            difference = np.array(difference)
+            array_2d = np.vstack((price, difference))
+        return array_2d
+
 
     def flatten_full(self, market, user):
         market = data
@@ -162,7 +174,7 @@ class DataGrabber():
         return new_state
 
     def load_state(self):
-        data = np.load('state.npy')
+        data = np.load('traderrl/data/state.npy')
         return data
 
     

@@ -7,10 +7,10 @@ from gym.utils import seeding
 #env = WhatIsTheColor()
 
 import numpy as np
-from env import Template
+from .env import Template
 
 
-class Template(gym.Env):
+class Template_Gym(gym.Env):
     metadata = {
         "render.modes": ["human", "rgb_array"],
     }
@@ -26,6 +26,7 @@ class Template(gym.Env):
         self.state = None
         self.action_dim = 4
         self.state_dim = 26
+        self.state = 26
 
 
         # forward or backward in each dimension

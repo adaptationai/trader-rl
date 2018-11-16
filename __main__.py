@@ -1,8 +1,28 @@
-from traderrl import DataGrabber
+import argparse
 
+import gym
+import numpy as np
+from traderrl import DataGrabber
+from traderrl import MarketSim
+from traderrl import Template
+from traderrl import Template_Gym
+from traderrl import Baseline_Details
+test = Baseline_Details()
 
 def main():
-    
+    parser = argparse.ArgumentParser(description="Train DQN on cartpole")
+    parser.add_argument('--max-timesteps', default=100000000, type=int, help="Maximum number of timesteps")
+    args = parser.parse_args()
+
+    test.main(args)
+    #test = Template_Gym()
+    #test = Template()
+    #test.reset()
+    #print(test.state[0])
+        #k = test.state_maker()
+#print(len(k))
+    #for step in range(len(test.state)):
+        #test.step(1)
     
 
 

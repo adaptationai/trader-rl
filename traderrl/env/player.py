@@ -1,5 +1,9 @@
+#import sys, os
+
+#sys.path.append('..')  
 import numpy as np
-from utilities import DataGrabber
+from ..common import DataGrabber
+#from utilities import DataGrabber
 import torch
 import numpy
 class Player():

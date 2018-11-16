@@ -1,9 +1,11 @@
 import numpy as np
-from utilities import DataGrabber
+#from utilities import DataGrabber
 import torch
-from player import Player
+from .player import Player
+from ..common import DataGrabber
 import numpy
 import random
+#from ..common import DataGrabber
 class MarketSim():
     def __init__(self):
         self.love = 14
