@@ -9,8 +9,8 @@ from stable_baselines import PPO2
 #from stable_baselines.deepq import DQN, MlpPolicy
 
 #from env import Template
-from template_env import Template
-env = Template()
+from ..env import Template_Gym
+env = Template
 
 #env = gym.make('CartPole-v1')
 env = DummyVecEnv([lambda: env])  # The algorithms require a vectorized environment to run

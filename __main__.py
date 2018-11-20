@@ -7,11 +7,13 @@ from traderrl import MarketSim
 from traderrl import Template
 from traderrl import Template_Gym
 from traderrl import Baseline_Details
-test = Baseline_Details()
+from traderrl import 
+#test = Baseline_Details()
+test from
 
 def main():
     parser = argparse.ArgumentParser(description="Train DQN on cartpole")
-    parser.add_argument('--max-timesteps', default=100000000, type=int, help="Maximum number of timesteps")
+    parser.add_argument('--max-timesteps', default=10000000, type=int, help="Maximum number of timesteps")
     args = parser.parse_args()
 
     test.main(args)

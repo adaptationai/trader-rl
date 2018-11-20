@@ -19,15 +19,14 @@ import matplotlib.pyplot as plt
 #if is_ipython:
 #    from IPython import display
 #plt.ion()
-
-from deep_rl import *
+from ..lib import deep_rl
+#from deep_rl import *
 import torch
 import numpy as np
 from collections import deque
 #from agent import Agent
-from env import Template
-
-env = Template("trader")
+from ..env import Template_Gym
+#from template_env import Template_Gym
 
 def run_steps_2(agent):
     random_seed()
@@ -58,124 +57,69 @@ def run_steps_2(agent):
             return False, None, None, None
         agent.step()
 
-
-
-
-class Trader(BaseTask):
-    def __init__(self):
+class TraderRl(BaseTask):
+    def __init__(self, name='Trader-rl', max_steps=1440, log_dir=None):
         BaseTask.__init__(self)
-        self.name = 'Trader'
-        self.env = env
-        self.action_dim = 4
-        self.state_dim = 2886
-        
-    def reset(self):
-        state = self.env.reset()
-        state = np.array([state])
-        #print('state')
-        #print(state)
-        return np.array(state)
-
-    def step(self, action):
-        #if action == 2:
-            #print('action')
-            #print(action)
-
-        next_state, reward, done = self.env.step(action)
-        #if reward != 0:
-            #print(reward)
-        next_state = np.array([next_state])
-        reward = np.array([reward])
-        if done:
-            done = 1
-            done = np.array([done])
-            #print('done')
-        else:
-            done = np.array([done])
-        #print('next_state')
-        #print(next_state)
-        #print('rewards')
-        #print(reward)
-        #print('done')
-        #print(done)
-        if np.any(done):
-            next_state = self.reset()
-        return next_state, reward, done, None
+        self.name = name
+        self.env = Template_Gym()
+        self.env._max_episode_steps = max_steps
+        self.action_dim = self.env.action_space.n
+        self.state_dim = self.env.observation_space.shape[0]
+        #self.env = self.set_monitor(self.env, log_dir)
     
     def seed(self, random_seed):
         pass
 
+class Train51():
+    def __init__(self):
+        self.love = "Ramona"
 
-def categorical_dqn_cart_pole():
-    game = 'CartPole-v0'
-    config = Config()
-    task_fn = lambda: Trader()
-    config.task_fn = task_fn
-    config.eval_env = config.task_fn()
+
+    def categorical_dqn_trader(self):
+        game = 'Trader-rl-c51
+        config = Config()
+        task_fn = lambda: TraderRl()
+        #task_fn = lambda log_dir: Trader()
+        config.num_workers = 1
+        #config.task_fn = lambda: ParallelizedTask(task_fn, config.num_workers)
+        config.task_fn = task_fn
+
+        config.eval_env = task_fn()
     
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
-    config.network_fn = lambda: CategoricalNet(config.action_dim, config.categorical_n_atoms, FCBody(config.state_dim))
-    config.random_action_prob = LinearSchedule(1.0, 0.1, 1e4)
+        config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
+        config.network_fn = lambda: CategoricalNet(config.action_dim, config.categorical_n_atoms, FCBody(config.state_dim))
+        config.random_action_prob = LinearSchedule(1.0, 0.1, 1e4)
 
-    config.replay_fn = lambda: Replay(memory_size=10000, batch_size=10)
-    #config.replay_fn = lambda: AsyncReplay(memory_size=10000, batch_size=10)
+        #config.replay_fn = lambda: Replay(memory_size=1000000, batch_size=32)
+        config.replay_fn = lambda: AsyncReplay(memory_size=1000000, batch_size=32)
 
-    config.discount = 0.99
-    config.target_network_update_freq = 200
-    config.exploration_steps = 100
-    config.categorical_v_max = 100
-    config.categorical_v_min = -100
-    config.categorical_n_atoms = 50
-    config.gradient_clip = 5
-    config.sgd_update_frequency = 4
-
-    config.eval_interval = int(5e3)
-    config.max_steps = 1e5
-    config.logger = get_logger()
-    run_steps_2(CategoricalDQNAgent(config))
-success, rwd_deque, rwd_all, model_path = categorical_dqn_cart_pole()
-
-def ppo_ppo_test():
-    config = Config()
-    #config.num_workers = 1
-    #task_fn = lambda log_dir: ClassicalControl('CartPole-v0', max_steps=200, log_dir=log_dir)
-    task_fn = lambda: Trader()
-    #task_fn = lambda log_dir: Trader()
-    config.num_workers = 5
-    #config.task_fn = lambda: ParallelizedTask(task_fn, config.num_workers)
-    config.task_fn = task_fn
-    config.eval_env = task_fn()
-    #config.eval_env = task_fn(None)
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
-    config.network_fn = lambda: CategoricalActorCriticNet(config.state_dim, config.action_dim, FCBody(config.state_dim))
-    config.discount = 0.99
-    config.use_gae = True
-    config.gae_tau = 0.95
-    config.entropy_weight = 0.01
-    config.gradient_clip = 5
-    config.rollout_length = 128
-    config.optimization_epochs = 10
-    config.num_mini_batches = 4
-    config.ppo_ratio_clip = 0.2
-    config.log_interval = 128 * 5 * 10
-    #config.max_steps = 1440
-    config.logger = get_logger()
-    return run_steps_2(PPOAgent(config))
-
-#success, rwd_deque, rwd_all, model_path = ppo_ppo_test()
+        config.discount = 0.99
+        config.target_network_update_freq = 200
+        config.exploration_steps = 100
+        config.categorical_v_max = 100
+        config.categorical_v_min = -100
+        config.categorical_n_atoms = 50
+        config.gradient_clip = 5
+        config.sgd_update_frequency = 4
+        config.save_interval = 14400
+        config.eval_interval = int(14400)
+        config.max_steps = 1e7
+        config.logger = get_logger()
+        run_steps(CategoricalDQNAgent(config))
+    success, rwd_deque, rwd_all, model_path = categorical_dqn_trader()
 
 
-if success:
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    plt.plot(np.arange(len(rwd_all)), rwd_all)
-    plt.ylabel('Score')
-    plt.xlabel('Episode #')
-    plt.show()
+    if success:
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        plt.plot(np.arange(len(rwd_all)), rwd_all)
+        plt.ylabel('Score')
+        plt.xlabel('Episode #')
+        plt.show()
 
-if success:
-    print("SUCCESS: Mean return of %.2f obtained over the last %d episodes. Victory was achieved after playing a total of %d episodes." % (
-        np.mean(rwd_deque), len(rwd_deque), len(rwd_all)))
+    if success:
+        print("SUCCESS: Mean return of %.2f obtained over the last %d episodes. Victory was achieved after playing a total of %d episodes." % (
+            np.mean(rwd_deque), len(rwd_deque), len(rwd_all)))
 
 
 

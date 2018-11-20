@@ -7,8 +7,8 @@ from stable_baselines.common.policies import MlpPolicy, MlpLnLstmPolicy
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines.common import set_global_seeds
 from stable_baselines import ACKTR, PPO2
-from template_env import Template
-env = Template()
+from ..env import Template_Gym
+env = Template_Gym()
 
 def make_env(env_id, rank, seed=0):
     """

@@ -29,8 +29,8 @@ from stable_baselines.common.vec_env import DummyVecEnv
 #from stable_baselines.deepq import DQN, MlpPolicy
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines.common import set_global_seeds
-from template_env import Template
-#env = Template
+from ..env import Template_Gym
+env = Template_Gym()
 #env = DummyVecEnv([lambda: env])
 
 def make_env(env_id, rank, seed=0):
@@ -91,7 +91,15 @@ def run_steps_2(agent):
         agent.step()
 
 
-
+class ClassicalControl_2(BaseTask):
+    def __init__(self, name='CartPole-v0', max_steps=1440, log_dir=None):
+        BaseTask.__init__(self)
+        self.name = name
+        self.env = Template_Gym()
+        self.env._max_episode_steps = max_steps
+        self.action_dim = self.env.action_space.n
+        self.state_dim = self.env.observation_space.shape[0]
+        #self.env = self.set_monitor(self.env, log_dir)
 
 class Trader(BaseTask):
     def __init__(self):
@@ -141,13 +149,13 @@ class Trader(BaseTask):
 
 # DQN
 def dqn_cart_pole():
-    game = 'CartPole-v0'
+    game = 'CartPole-v0moo'
     config = Config()
     #task_fn = lambda: env()
     #config.task_fn = task_fn
     #config.eval_env = task_fn()
 
-    task_fn = lambda: Trader()
+    task_fn = lambda: ClassicalControl_2()
     #task_fn = lambda log_dir: Trader()
     config.num_workers = 1
     #config.task_fn = lambda: ParallelizedTask(task_fn, config.num_workers)
@@ -168,13 +176,13 @@ def dqn_cart_pole():
     config.random_action_prob = LinearSchedule(1.0, 0.1, 1e4)
     config.discount = 0.99
     config.target_network_update_freq = 200
-    config.exploration_steps = 1000
+    config.exploration_steps = 100000
     config.double_q = True
     #config.double_q = False
     config.sgd_update_frequency = 4
     config.gradient_clip = 5
-    config.eval_interval = int(5e3)
-    config.max_steps = 1e5
+    config.eval_interval = int(5e14)
+    config.max_steps = 1e8
     config.async_actor = False
     config.logger = get_logger()
     run_steps(DQNAgent(config))
@@ -186,7 +194,7 @@ def ppo_ppo_test():
     #task_fn = lambda log_dir: ClassicalControl('CartPole-v0', max_steps=200, log_dir=log_dir)
     task_fn = lambda: Trader()
     #task_fn = lambda log_dir: Trader()
-    config.num_workers = 1
+    config.num_workers = 4
     #config.task_fn = lambda: ParallelizedTask(task_fn, config.num_workers)
     config.task_fn = task_fn
     config.eval_env = task_fn()

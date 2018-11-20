@@ -25,9 +25,8 @@ import torch
 import numpy as np
 from collections import deque
 #from agent import Agent
-from env import Template
-
-env = Template("trader")
+from ..env import Template_Gym
+env = Template_Gym()
 
 def run_steps_2(agent):
     random_seed()

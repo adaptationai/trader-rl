@@ -19,7 +19,7 @@ class MarketSim():
         self.price = None
         self.count = 0
         self.diff = 0
-        self.load = True
+        self.load = False
     
     def make_episode(self):
         if self.load == True:
@@ -54,10 +54,11 @@ class MarketSim():
         #self.player.render()
     
         #print('-')
-        
+        #d1 = self.player.pips_net
         #self.player.action(self.price, action)
         self.get_price()
         self.get_diff()
+        d1 = self.player.pips_net
         self.player.action(self.price, action)
         #print(self.price)
         #self.player.action_user(self.price)
@@ -68,7 +69,7 @@ class MarketSim():
         
         if self.count == 1440:
             self.player.close_position(self.price)
-        self.reward = self.player.reward
+        #self.reward = self.player.reward
         #print(self.reward)
         self.make_current_state(self.count)
         #state_diff = self.difference(self.state)
@@ -77,6 +78,11 @@ class MarketSim():
         self.get_diff()
         #print(self.price)
         self.player.update(self.price)
+        d2 = self.player.pips_net
+        dy = d2 - d1
+        #print(dy)
+        #math.log(dy)
+        self.reward = dy
         state = self.state_maker()
         
         
