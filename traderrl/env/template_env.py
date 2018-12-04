@@ -24,18 +24,19 @@ class Template_Gym(gym.Env):
         self.reward = None
         self.done = False
         self.state = None
-        self.action_dim = 4
-        self.state_dim = 26
-        self.state = 26
+        self.action_dim = 3
+        self.state_dim = 366
+        self.num_envs = 1
+        self.num_envs_per_sub_batch = 1
 
 
         # forward or backward in each dimension
-        self.action_space = spaces.Discrete(4)
+        self.action_space = spaces.Discrete(3)
 
         # observation is the x, y coordinate of the grid
         #low = np.zeros(0, dtype=int)
         #high =  np.array(1, dtype=int) - np.ones(len(self.maze_size), dtype=int)
-        self.observation_space = spaces.Box(low=-10, high=10, shape=(26,))
+        self.observation_space = spaces.Box(low=-1000, high=1000, shape=(366,))
         #print("obs")
         #print (self.observation_space)
 
@@ -63,8 +64,10 @@ class Template_Gym(gym.Env):
     def step(self, action):
         #self.state = self.env.generate_number()
         #self.env.display()
+        #print(action)
         self.next_state, self.reward, self.done = self.env.step(action)
-        self.info = None
+        #self.info = 0
+        #print(self.reward)
         self.info = { 'pnl':1, 'nav':1, 'costs':1 }
         #self.next_state = self.next_state.tolist()
         return self.next_state, self.reward, self.done, self.info
@@ -90,3 +93,4 @@ class Template_Gym(gym.Env):
         return 
 
 
+test = Template_Gym()

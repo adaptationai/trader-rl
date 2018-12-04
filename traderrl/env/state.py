@@ -19,18 +19,18 @@ class MarketSim():
         self.price = None
         self.count = 0
         self.diff = 0
-        self.load = False
+        self.load = True
     
     def make_episode(self):
         if self.load == True:
-            self.state_full = self.data_grabber.load_state()
+            self.state_full = self.data_grabber.load_state_2()
         else:
             self.state_full = self.data_grabber.process_to_array()
 
 
     def make_current_state(self, count):
         start = (0+count)
-        end = (10+count)
+        end = (60+count)
         self.state = self.state_full[start:end]
         return self.state
 
@@ -67,7 +67,7 @@ class MarketSim():
         #print(self.price)
         #self.player.update(self.price)
         
-        if self.count == 1440:
+        if self.count == 60:
             self.player.close_position(self.price)
         #self.reward = self.player.reward
         #print(self.reward)
@@ -83,6 +83,8 @@ class MarketSim():
         #print(dy)
         #math.log(dy)
         self.reward = dy
+        if self.count == 60:
+            print(self.reward)
         state = self.state_maker()
         
         
@@ -124,7 +126,7 @@ class MarketSim():
         print(f'Price:{self.price}')
         #print(f'diff:{self.diff}')
         print(f'Count:{self.count}')
-        print(f'Reward:{self.player.reward}')
+        print(f'Reward:{self.reward}')
 
 
     def state_maker(self):
@@ -141,7 +143,7 @@ class MarketSim():
         return self.player.reward
     
     def done(self, count):
-        if count == 1440:
+        if count == 60:
             self.render()
             self.player.render()
             return True
