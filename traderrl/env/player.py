@@ -59,6 +59,10 @@ class Player():
                 self.balance = self.balance + profit
                 self.positions = []
                 self.placement = 0
+                buy = m_price + self.half_spread
+                self.positions.append([(buy), 1])
+                #self.pips += -2
+                self.reward = 0
                 #self.reward = profit * 10000
                 #elf.update()
             else:
@@ -88,6 +92,10 @@ class Player():
                 self.balance = self.balance + profit
                 self.positions = []
                 self.placement = 0
+                sell = m_price - self.half_spread
+                self.positions.append([(sell), -1])
+                #self.pips += -2
+                self.reward = 0
                 #self.reward = profit * 10000
                 #elf.update()
             else:
@@ -178,9 +186,13 @@ class Player():
     def details(self, m_price):
         #self.update(m_price)
         if len(self.positions) == 1:
-            return [self.balance, self.net_balance, self.placement, self.positions[0]]
+            pos = self.positions[0]
+            if pos[1] == 1:
+                return [self.balance, self.net_balance, self.placement, self.pips_net, [0,0,1]]
+            if pos[1] == -1:
+                return [self.balance, self.net_balance, self.placement, self.pips_net, [0,1,0]]
         else:
-            return [self.balance, self.net_balance, self.placement, [0,0]]
+            return [self.balance, self.net_balance, self.placement, self.pips_net, [1,0,0]]
         
 
     def render(self):

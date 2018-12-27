@@ -58,7 +58,7 @@ def run_steps_2(agent):
         agent.step()
 
 class ClassicalControl_2(BaseTask):
-    def __init__(self, name='CartPole-v0', max_steps=1440, log_dir=None):
+    def __init__(self, name='CartPole-v0', max_steps=1440, log_dir='./logdir'):
         BaseTask.__init__(self)
         self.name = name
         self.env = Template_Gym()
@@ -100,7 +100,7 @@ def categorical_dqn_cart_pole():
     config.gradient_clip = 5
     config.sgd_update_frequency = 4
     config.save_interval = 14400
-    config.eval_interval = int(14400)
+    config.eval_interval = int(144000)
     #config.max_steps = 1e7
     config.async_actor = True
     config.max_steps = 1e7

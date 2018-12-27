@@ -10,10 +10,10 @@ from traderrl import Baseline_Details
 from traderrl import TraderRl
 from traderrl import Train51
 #test = Baseline_Details()
-test = Train51()
+#test = Train51()
 
 def main():
-    test.categorical_dqn_trader()
+    #test.categorical_dqn_trader()
     #test = Template_Gym()
     #test = Template()
     #test.reset()
@@ -23,11 +23,13 @@ def main():
     #for step in range(len(test.state)):
         #test.step(1)
     
-
+    
 
 if __name__ == '__main__':
     # execute only if run as the entry point into the program
     main()
+    
+
 
 
 #ref: inc04138877 

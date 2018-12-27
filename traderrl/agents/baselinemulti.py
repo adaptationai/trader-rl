@@ -13,16 +13,18 @@ env = Template_Gym()
 class CustomPolicy(FeedForwardPolicy):
     def __init__(self, *args, **kwargs):
         super(CustomPolicy, self).__init__(*args, **kwargs,
-                                           layers=[256,256,256],
+                                           layers=[256, 256, 256],
                                            layer_norm=True,
                                             feature_extraction="mlp")
                     
 class CustomPolicy_2(LstmPolicy):
     def __init__(self, *args, **kwargs):
         super(CustomPolicy_2, self).__init__(*args, **kwargs,
-                                           layers=[256,256,256],
+                                           layers=[256,256],
                                            layer_norm=True,
-                                            feature_extraction="mlp")
+                                            feature_extraction="mlp",
+                                            n_envs=16,
+                                            )
 
 class CustomPolicy_3(FeedForwardPolicy):
     def __init__(self, *args, **kwargs):
@@ -57,12 +59,14 @@ env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
 env = VecNormalize(env, norm_obs=True, norm_reward=True,
                    clip_obs=10.)
                    
-model = PPO2(CustomPolicy_2, env, verbose=0,tensorboard_log="./ppo2full10-3/" )
+#model = PPO2(CustomPolicy_2, env, learning_rate=1e-5, verbose=0,tensorboard_log="./ppo2full10-lstm-2/" )
 #model = PPO2(MlpLnLstmPolicy, env, verbose=0,tensorboard_log="./ppo2full10-3/" )
-#model = PPO2(CustomPolicy, env, verbose=0, learning_rate=1e-6, tensorboard_log="./ppo2full10-2/" )
+#model = PPO2(CustomPolicy, env, verbose=0, learning_rate=1e-5, tensorboard_log="./ppo2fulltime105-333333/" )
 #model = DQN(CustomPolicy_3, env, verbose=0, prioritized_replay=True, tensorboard_log="./ppo2full10-2/" )
 #model = ACKTR(CustomPolicy, env, verbose=0, learning_rate=1e-6, tensorboard_log="./ppo2full10-2/" )
-#model = PPO2.load('trader256x3', env, policy=CustomPolicy, tensorboard_log="./ppo2full10/" )
+model = PPO2.load("trader10year15m-32bk-reward-lr5-100m-2x256-20y-shaped-4", env, policy=CustomPolicy, tensorboard_log="./ppo2full10/" )
+#model = PPO2.load("trader10year15m-32bk-reward-lr5-80m-2x256-20y-shaped-3", env, policy=CustomPolicy, tensorboard_log="./ppo2full10/" )
+#model = PPO2.load("trader10year15m-32bk-lstm", env, policy=CustomPolicy_2, tensorboard_log="./ppo2full10-10/" )
 #model.load("traderlstm.pkl")
 #mode = PPO2.load('traderlstm2', env, verbose=0)
 #model = PPO2(MlpLnLstmPolicy, env, verbose=1)
@@ -99,7 +103,7 @@ def evaluate(model, num_steps=14400):
         n_episodes += len(episode_rewards[i])   
 
     # Compute mean reward
-    mean_reward = round(np.mean(mean_rewards), 1)
+    mean_reward = np.mean(mean_rewards)
     print("Mean reward:", mean_reward, "Num episodes:", n_episodes)
 
     return mean_reward
@@ -107,15 +111,36 @@ def evaluate(model, num_steps=14400):
 
 #mean_reward_before_train = evaluate(model, num_steps=14400)
 
-n_timesteps = 100000000
+n_timesteps = 10000000
 
 # Multiprocessed RL Training
 start_time = time.time()
 #model.learn(total_timesteps=int(n_timesteps * 1.1), seed=0)
-model.learn(n_timesteps)
+#model.learn(n_timesteps)
 total_time_multi = time.time() - start_time
-model.save("trader256x3-1_full")
+#model.save("trader10year15m-32bk-reward-lr5-10m-2x256")
+#model.save("trader10year15m-32bk-reward-lr5-10m-2x256-20y-shaped-4")
+#model.learn(n_timesteps)
+#model.save("trader10year15m-32bk-reward-lr5-20m-2x256-20y-shaped-4")
+#model.learn(n_timesteps)
+#model.save("trader10year15m-32bk-reward-lr5-30m-2x256-20y-shaped-4")
+#model.learn(n_timesteps)
+#model.save("trader10year15m-32bk-reward-lr5-40m-2x256-20y-shaped-4")
+#model.learn(n_timesteps)
+#model.save("trader10year15m-32bk-reward-lr5-50m-2x256-20y-shaped-4")
+#model.learn(n_timesteps)
+#model.save("trader10year15m-32bk-reward-lr5-60m-2x256-20y-shaped-4")
+#model.learn(n_timesteps)
+#model.save("trader10year15m-32bk-reward-lr5-70m-2x256-20y-shaped-4")
+#model.learn(n_timesteps)
+#model.save("trader10year15m-32bk-reward-lr5-80m-2x256-20y-shaped-4")
+#model.learn(n_timesteps)
+#model.save("trader10year15m-32bk-reward-lr5-90m-2x256-20y-shaped-4")
+#model.learn(n_timesteps)
+#model.save("trader10year15m-32bk-reward-lr5-100m-2x256-20y-shaped-4")
+#model.save("trader10year15m-32bk-2m")
+#model.save("trader10year15m-32bk-lstm")
 
 print("Took {:.2f}s for multiprocessed version - {:.2f} FPS".format(total_time_multi, n_timesteps / total_time_multi))
 
-mean_reward_before_train = evaluate(model, num_steps=144000)
+mean_reward_before_train = evaluate(model, num_steps=96000)
