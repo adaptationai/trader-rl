@@ -30,7 +30,7 @@ class MarketSim():
 
     def make_current_state(self, count):
         start = (0+count)
-        end = (96+count)
+        end = (1440+count)
         self.state = self.state_full[start:end]
         return self.state
 
@@ -48,7 +48,7 @@ class MarketSim():
         #print(self.price)
         #print(self.diff)
         #self.get_price()
-        self.count += 1
+        self.count += 5
         #print(self.count)
         #self.render()
         #self.player.render()
@@ -68,7 +68,7 @@ class MarketSim():
         #print(self.price)
         #self.player.update(self.price)
         
-        if self.count == 96:
+        if self.count == 1440:
             self.player.close_position(self.price)
         #self.reward = self.player.reward
         #print(self.reward)
@@ -153,7 +153,7 @@ class MarketSim():
         return self.player.reward
     
     def done(self, count):
-        if count == 96:
+        if count == 1440:
             self.render()
             self.player.render()
             return True
@@ -162,8 +162,8 @@ class MarketSim():
 
     def difference(self, state):
         new_state = []
-        r = 96
-        for i in range(96):
+        r = 1440
+        for i in range(1440):
             before = state[i][0]
             b = i+1
             after = state[b][0]
@@ -227,26 +227,74 @@ class MarketSim():
         day4 = state[-4][5]
         hour4 = state[-4][6]
         minute4 = state[-4][7]
+        cl5 = state[-5][0]
+        hi5 = state[-5][1]
+        lo5 = state[-5][2]
+        op5 =state[-5][3]
+        v5 = state[-5][4]
+        day5 = state[-5][5]
+        hour5 = state[-5][6]
+        minute5 = state[-5][7]
+        cl6 = state[-6][0]
+        hi6 = state[-6][1]
+        lo6 = state[-6][2]
+        op6 =state[-6][3]
+        v6 = state[-6][4]
+        day6 = state[-6][5]
+        hour6 = state[-6][6]
+        minute6 = state[-6][7]
+        cl7 = state[-7][0]
+        hi7 = state[-7][1]
+        lo7 = state[-7][2]
+        op7 =state[-7][3]
+        v7 = state[-7][4]
+        day7 = state[-7][5]
+        hour7 = state[-7][6]
+        minute7 = state[-7][7]
+        cl8 = state[-8][0]
+        hi8 = state[-8][1]
+        lo8 = state[-8][2]
+        op8 =state[-8][3]
+        v8 = state[-8][4]
+        day8 = state[-8][5]
+        hour8 = state[-8][6]
+        minute8 = state[-8][7]
+        cl9 = state[-9][0]
+        hi9 = state[-9][1]
+        lo9 = state[-9][2]
+        op9 =state[-9][3]
+        v9 = state[-9][4]
+        day9 = state[-9][5]
+        hour9 = state[-9][6]
+        minute9 = state[-9][7]
+        cl10 = state[-10][0]
+        hi10 = state[-10][1]
+        lo10 = state[-10][2]
+        op10 =state[-10][3]
+        v10 = state[-10][4]
+        day10 = state[-10][5]
+        hour10 = state[-10][6]
+        minute10 = state[-10][7]
         #cl5 = state[-5][0]
         #cl15 = state[-15][0]
-        cl30 =  cl - state[-2][3]
-        cl1h = cl - state[-4][3]
-        cl2h = cl - state[-8][3]
-        cl4h = cl - state[-16][3]
-        cl8h = cl - state[-32][3]
-        cl16h = cl - state[-64][3]
-        clday = cl - state[-96][3]
+        cl30 =  cl - state[-30][3]
+        cl1h = cl - state[-60][3]
+        cl2h = cl - state[-120][3]
+        cl4h = cl - state[-240][3]
+        cl8h = cl - state[-480][3]
+        cl16h = cl - state[-960][3]
+        clday = cl - state[-1440][3]
         clnow = cl - op
         hinow = hi - op
         lonow = lo - op
         state14 = state[-14:]
-        state30 = state[-2:]
-        state1h = state[-4:]
-        state2h = state[-8:]
-        state4h = state[-16:]
-        state8h = state[-32:]
-        state16h = state[-64:]
-        stateday = state[-96:]
+        state30 = state[-30:]
+        state1h = state[-60:]
+        state2h = state[-120:]
+        state4h = state[-240:]
+        state8h = state[-480:]
+        state16h = state[-960:]
+        stateday = state[-1440:]
         state30diff = self.difference2(state30)
         state1hdiff = self.difference2(state1h)
         state2hdiff = self.difference2(state2h)
@@ -278,7 +326,7 @@ class MarketSim():
         atrday = self.atr(stateday)
         
 
-        new_state.append([cl, hi, lo, op, v, day, hour, minute, cl2, hi2, lo2, op2, v2, day2, hour2, minute2, cl3, hi3, lo3, op3, v3, day3, hour3, minute3, cl4, hi4, lo4, op4, v4, day4, hour4, minute4, clnow, hinow, lonow, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr14, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av30, av1h, av2h, av4h, av8h, av16h, avday, md30, md1h, md2h, md4h, md8h, md16h, mdday])
+        new_state.append([cl, hi, lo, op, v, day, hour, minute, cl2, hi2, lo2, op2, v2, day2, hour2, minute2, cl3, hi3, lo3, op3, v3, day3, hour3, minute3, cl4, hi4, lo4, op4, v4, day4, hour4, minute4, cl5, hi5, lo5, op5, v5, day5, hour5, minute5, cl6, hi6, lo6, op6, v6, day6, hour6, minute6, cl7, hi7, lo7, op7, v7, day7, hour7, minute7, cl8, hi8, lo8, op8, v8, day8, hour8, minute8, cl9, hi9, lo9, op9, v9, day9, hour9, minute9, cl10, hi10, lo10, op10, v10, day10, hour10, minute10, clnow, hinow, lonow, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr14, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av30, av1h, av2h, av4h, av8h, av16h, avday, md30, md1h, md2h, md4h, md8h, md16h, mdday])
 
         return new_state
 

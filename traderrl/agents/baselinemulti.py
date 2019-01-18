@@ -56,8 +56,8 @@ num_cpu = 16  # Number of processes to use
 #env = DummyVecEnv([lambda: env])
 
 env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
-env = VecNormalize(env, norm_obs=True, norm_reward=True,
-                   clip_obs=10.)
+#env = VecNormalize(env, norm_obs=True, norm_reward=True,
+                   #clip_obs=10.)
                    
 #model = PPO2(CustomPolicy_2, env, learning_rate=1e-5, verbose=0,tensorboard_log="./ppo2full10-lstm-2/" )
 #model = PPO2(MlpLnLstmPolicy, env, verbose=0,tensorboard_log="./ppo2full10-3/" )
