@@ -21,6 +21,14 @@ A Hierarchical Multi-Agent Deep Reinforcement Learning trading system.
 	conda create --name trader-rl python=3.6 
 	activate trader-rl
 	```
+
+- Install tensorflow:
+    ```bash
+    conda install tensorflow-gpu
+	or
+	conda install tensorflow
+	```
+
 - Install requirements:
     ```bash
     pip install -r requirements.txt
