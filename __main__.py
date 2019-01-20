@@ -13,15 +13,7 @@ from traderrl import Train51
 #test = Train51()
 
 def main():
-    #test.categorical_dqn_trader()
-    #test = Template_Gym()
-    #test = Template()
-    #test.reset()
-    #print(test.state[0])
-        #k = test.state_maker()
-#print(len(k))
-    #for step in range(len(test.state)):
-        #test.step(1)
+    
     
     
 
