@@ -60,3 +60,7 @@ A Hierarchical Multi-Agent Deep Reinforcement Learning trading system.
 - [ ] pair arg
 - [ ] pair config
 - [ ] eval or train arg
+- [ ] cleanup state rep
+- [ ] setup indicators all in class
+
+
