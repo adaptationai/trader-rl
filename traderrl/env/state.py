@@ -278,6 +278,8 @@ class MarketSim():
         minute10 = state[-10][7]
         #cl5 = state[-5][0]
         #cl15 = state[-15][0]
+        cl5 =  cl - state[-5][3]
+        cl15 =  cl - state[-15][3]
         cl30 =  cl - state[-30][3]
         cl1h = cl - state[-60][3]
         cl2h = cl - state[-120][3]
@@ -288,7 +290,9 @@ class MarketSim():
         clnow = cl - op
         hinow = hi - op
         lonow = lo - op
-        state14 = state[-14:]
+
+        state5 = state[-5:]
+        state15 = state[-15:]
         state30 = state[-30:]
         state1h = state[-60:]
         state2h = state[-120:]
@@ -296,6 +300,9 @@ class MarketSim():
         state8h = state[-480:]
         state16h = state[-960:]
         stateday = state[-1440:]
+        statediff = self.difference2(state)
+        state5diff = self.difference2(state5)
+        state15diff = self.difference2(state15)
         state30diff = self.difference2(state30)
         state1hdiff = self.difference2(state1h)
         state2hdiff = self.difference2(state2h)
@@ -303,6 +310,9 @@ class MarketSim():
         state8hdiff = self.difference2(state8h)
         state16hdiff = self.difference2(state16h)
         statedaydiff = self.difference2(stateday)
+        av = self.average_diff(statediff)
+        av5 = self.average_diff(state30diff)
+        av15 = self.average_diff(state30diff)
         av30 = self.average_diff(state30diff)
         av1h = self.average_diff(state1hdiff)
         av2h = self.average_diff(state2hdiff)
@@ -310,6 +320,8 @@ class MarketSim():
         av8h = self.average_diff(state8hdiff)
         av16h = self.average_diff(state16hdiff)
         avday = self.average_diff(statedaydiff)
+        md5 = self.median_diff(state5diff)
+        md15 = self.median_diff(state15diff)
         md30 = self.median_diff(state30diff)
         md1h = self.median_diff(state1hdiff)
         md2h = self.median_diff(state2hdiff)
@@ -317,7 +329,9 @@ class MarketSim():
         md8h = self.median_diff(state8hdiff)
         md16h = self.median_diff(state16hdiff)
         mdday = self.median_diff(statedaydiff)
-        atr14 = self.atr(state14)
+        atr = self.atr(state)
+        atr5 = self.atr(state5)
+        atr15 = self.atr(state15)
         atr30 = self.atr(state30)
         atr1h = self.atr(state1h)
         atr2h = self.atr(state2h)
@@ -325,9 +339,47 @@ class MarketSim():
         atr8h = self.atr(state8h)
         atr16h = self.atr(state16h)
         atrday = self.atr(stateday)
+        aavol = self.average_vol(state)
+        aavol5 = self.average_vol(state5)
+        aavol15 = self.average_vol(state15)
+        aavol30 = self.average_vol(state30)
+        aavol1h = self.average_vol(state1h)
+        aavol2h = self.average_vol(state2h)
+        aavol4h = self.average_vol(state4h)
+        aavol8h = self.average_vol(state8h)
+        aavol16h = self.average_vol(state16h)
+        aavolday = self.average_vol(stateday)
+        #candle1 = self.candle_maker(state[-1:])
+        candle5 = self.candle_maker(state[-5:])
+        
+        candle15 = self.candle_maker(state[-15:])
+        candle30 = self.candle_maker(state[-30:])
+        candle1h = self.candle_maker(state[-60:])
+        candle2h = self.candle_maker(state[-120:])
+        candle4h = self.candle_maker(state[-240:])
+        candle8h = self.candle_maker(state[-480:])
+        candle16h = self.candle_maker(state[-960:])
+        candleday = self.candle_maker(state[-1440:])
+
+        #so = self.stocastic_oscillator(candle1)
+        so5 = self.stocastic_oscillator(candle5)
+        #print(so5)
+        so15 = self.stocastic_oscillator(candle15)
+        so30 = self.stocastic_oscillator(candle30)
+        so1h = self.stocastic_oscillator(candle1h)
+        so2h = self.stocastic_oscillator(candle2h)
+        so4h = self.stocastic_oscillator(candle4h)
+        so8h = self.stocastic_oscillator(candle8h)
+        so16h = self.stocastic_oscillator(candle16h)
+        soday = self.stocastic_oscillator(candleday)
         
 
-        new_state.append([cl, hi, lo, op, v, day, hour, minute, cl2, hi2, lo2, op2, v2, day2, hour2, minute2, cl3, hi3, lo3, op3, v3, day3, hour3, minute3, cl4, hi4, lo4, op4, v4, day4, hour4, minute4, cl5, hi5, lo5, op5, v5, day5, hour5, minute5, cl6, hi6, lo6, op6, v6, day6, hour6, minute6, cl7, hi7, lo7, op7, v7, day7, hour7, minute7, cl8, hi8, lo8, op8, v8, day8, hour8, minute8, cl9, hi9, lo9, op9, v9, day9, hour9, minute9, cl10, hi10, lo10, op10, v10, day10, hour10, minute10, clnow, hinow, lonow, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr14, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av30, av1h, av2h, av4h, av8h, av16h, avday, md30, md1h, md2h, md4h, md8h, md16h, mdday])
+        
+        
+
+        #new_state.append([cl, hi, lo, op, v, day, hour, minute, cl2, hi2, lo2, op2, v2, day2, hour2, minute2, cl3, hi3, lo3, op3, v3, day3, hour3, minute3, cl4, hi4, lo4, op4, v4, day4, hour4, minute4, cl5, hi5, lo5, op5, v5, day5, hour5, minute5, cl6, hi6, lo6, op6, v6, day6, hour6, minute6, cl7, hi7, lo7, op7, v7, day7, hour7, minute7, cl8, hi8, lo8, op8, v8, day8, hour8, minute8, cl9, hi9, lo9, op9, v9, day9, hour9, minute9, cl10, hi10, lo10, op10, v10, day10, hour10, minute10, clnow, hinow, lonow, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr14, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av30, av1h, av2h, av4h, av8h, av16h, avday, md30, md1h, md2h, md4h, md8h, md16h, mdday])
+        #new_state.append([cl, hi, lo, op, v, day, hour, minute, clnow, hinow, lonow, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr15, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av30, av1h, av2h, av4h, av8h, av16h, avday, md30, md1h, md2h, md4h, md8h, md16h, mdday])
+        new_state.append([cl, hi, lo, op, v, day, hour, minute, clnow, hinow, lonow, cl5, cl15, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr, atr5, atr15, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av5, av15, av30, av1h, av2h, av4h, av8h, av16h, avday, md5, md15, md30, md1h, md2h, md4h, md8h, md16h, mdday, aavol, aavol5, aavol15, aavol30, aavol1h, aavol2h, aavol4h, aavol8h, aavol16h, aavolday, so1h, so2h, so4h, so8h, so16h, soday])
 
         return new_state
 
@@ -364,6 +416,35 @@ class MarketSim():
             new_state.append(state[i][4])
         new_state = np.mean(new_state)
         return new_state
+
+    def stocastic_oscillator(self, candle):
+        c = candle[0]
+        h = candle[1]
+        l = candle[2]
+        o = candle[3]
+        k = c - l
+        m = h - l
+        p =  k / m
+        return p
+
+    def candle_maker(self, state):
+        new_state = []
+        highs = []
+        lows = []
+        new_state.append(state[-1][0])
+        for i in range(len(state)):
+            highs.append(state[i][1])
+        for i in range(len(state)):
+            lows.append(state[i][2])
+        new_state.append(max(highs))
+        new_state.append(min(lows))
+        new_state.append(state[1][3])
+
+        
+
+        return new_state
+
+
 
 
 class MarketLive():
