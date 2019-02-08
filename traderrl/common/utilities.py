@@ -20,28 +20,17 @@ class DataGrabber():
         self.love = 14
         self.auth = Auth()
         self.client = oandapyV20.API(access_token=self.auth.access_token)
-        self.years = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007']
+        self.years = ['2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008']
         self.instrument = ['EUR_USD', 'AUD_USD', 'GBP_USD', 'NZD_USD', 'USD_CHF', 'USD_CAD']
         self.time = ['00:00:00']
         self.hour = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
         self.minute = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32','33','34', '35', '36', '37', '38','39','40','41','42','43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59']
-        self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28']
-        
+        self.day_feb = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28']
+        self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
         self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         self.granularity= ['M1', 'M5', 'M15', 'M30', 'H1', 'H4']
-        #self.full_year = np.load('2016-1m.npy')
-        #self.full_year = np.load('1year-5m.npy')
-        #self.full_year = np.load('10year-1m.npy')
-        #self.full_year = np.load('2018eval.npy') # eval
-        #fulltimetest105.npy
-        #self.full_year = np.load('eur10year192.npy') # full 10 year 194
-        #self.full_year = np.load('fulltimetest105.npy')
-        #self.full_year = np.load('all10year192.npy')
-        #self.full_year = np.load('20year192.npy')
         self.full_year = np.load('evaleuro2018192.npy')
         
-        
-        '10year-194-15m.npy'
 
     def get_candles(self, _from,  count, granularity, instrument):
         params = {"from": _from, "count": count, "granularity": granularity}
@@ -53,10 +42,8 @@ class DataGrabber():
     def data_converted(self, data):
         data_converted  = []
         for i in data['candles']:
-            #data_converted.append([i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o']]) 
             data_converted.append([i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o'], i['volume'], i['time']])
 
-            #data_converted.append([i['volume'], i['time'],i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o']])
         return data_converted
 
 
@@ -97,80 +84,49 @@ class DataGrabber():
         return data
 
     def process_to_array(self):
+        instrument = 'EUR_USD'
         year = random.choice(self.years)
         day = random.choice(self.day)
         month = random.choice(self.month)
         hour = random.choice(self.hour)
         minute = random.choice(self.minute)
-        self.day = ['04']
         day = random.choice(self.day)
-        #data = self.get_candles(year+'-'+month+'-'+day+'T'+hour+':'+minute+':00Z', 2880, "M1", "EUR_USD")
-        #data = self.get_candles('2016-01-'+day+'T00:00:00Z', 2880, "M1", "EUR_USD")
-        #data = self.get_candles('2016-'+month+'-'+day+'T00:00:00Z', 2880, "M1", "EUR_USD")
-        data = self.get_candles('2017-02-09T00:00:00Z', 2880, "M1", "EUR_USD")
+        data = self.get_candles(year+'-'+month+'-'+day+'T00:00:00Z', 4320, "M1", instrument)
         data = self.data_converted(data)
+        data = self.time_to_array(data)
         data = self.toarray(data)
-        #np.save('state4.npy', data)
-        data = self.difference(data)
-        #full_data = []
-        #full_data.append(data)
-        #np.save('state60.npy', data)
-        
-        #print(difference)
+    
         return data
 
     def process_to_array_2(self):
-        #year = random.choice(self.years)
-        #day = random.choice(self.day)
-        #month = random.choice(self.month)
-        #hour = random.choice(self.hour)
-        #minute = random.choice(self.minute)
-        #self.day = ['04']
-        #day = random.choice(self.day)
-        #data = self.get_candles(year+'-'+month+'-'+day+'T'+hour+':'+minute+':00Z', 2880, "M1", "EUR_USD")
-        #data = self.get_candles('2016-01-'+day+'T00:00:00Z', 2880, "M1", "EUR_USD")
         full_data = []
-        self.years = ['2018']
+        #self.years = ['2018']
         #self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11']
         self.month = ['01']
         self.instrument = ['EUR_USD']
         for i in self.instrument:
             for y in self.years:
                 for m in self.month:
-                    #if self.month == "02":
-                        #day = self.day2
-                    #else:
-                        #day = self.day
-                
-
-                    for d in self.day:
-                    
-            
-
-                        data = self.get_candles(y+'-'+m+'-'+d+'T00:00:00Z', 192, "M15", i)
-                        #data = self.get_candles('2016-03-01T00:00:00Z', 2880, "M1", "EUR_USD")
-
+                    if m == "02":
+                        day = self.day_feb
+                    else:
+                        day = self.day
+                    for d in day:
+                        data = self.get_candles(y+'-'+m+'-'+d+'T00:00:00Z', 4320, "M1", i)
                         data = self.data_converted(data)
                         data = self.time_to_array(data)
-                    
-                        #if data[0][5] != 5 or data[0][5] != 6:
-
-                            #data[5] = data_time
                         data = self.toarray(data)
-            #np.save('state4.npy', data)
-                        #data = self.difference(data)
-                    #full_data = []
+            
                         full_data.append(data)
         np.save('evaleuro2018jan192.npy', full_data)
-        
-        #print(difference)
+
         return full_data
 
     def process_to_tensor(self):
         data = self.get_candles('2016-06-01T00:00:00Z', 2880, "M1", "EUR_USD")
         data = self.data_converted(data)
-        data = self.toarray(dataall)
-        data = self.normalize(daallta)
+        data = self.toarray(data)
+        data = self.normalize(data)
         data = self.totensor(datalla)
         return data
 
@@ -252,41 +208,17 @@ class DataGrabber():
             new_state.append([c, h, l, v])
         return new_state
 
-    def load_state(self):
-        daz = ['state01.npy', 'state02.npy', 'state03.npy', 'state04.npy', 'state05.npy', 'state06.npy', 'state07.npy', 'state08.npy', 'state09.npy', 'state10.npy', 'state11.npy', 'state12.npy', 'state13.npy', 'state14.npy', 'state15.npy', 'state16.npy', 'state17.npy', 'state18.npy', 'state19.npy', 'state20.npy', 'state21.npy', 'state22.npy', 'state23.npy', 'state24.npy', 'state25.npy', 'state26.npy', 'state27.npy', 'state28.npy', 'state29.npy', 'state30.npy']
-        daz40 = ['state01.npy', 'state02.npy', 'state03.npy', 'state04.npy', 'state05.npy', 'state06.npy', 'state07.npy', 'state08.npy', 'state09.npy', 'state10.npy', 'state11.npy', 'state12.npy', 'state13.npy', 'state14.npy', 'state15.npy', 'state16.npy', 'state17.npy', 'state18.npy', 'state19.npy', 'state20.npy', 'state21.npy', 'state22.npy', 'state23.npy', 'state24.npy', 'state25.npy', 'state26.npy', 'state27.npy', 'state28.npy', 'state29.npy', 'state30.npy', 'state31.npy', 'state32.npy', 'state33.npy', 'state34.npy', 'state35.npy', 'state36.npy', 'state37.npy', 'state38.npy', 'state39.npy', 'state40.npy']
-        daz60 = ['state01.npy', 'state02.npy', 'state03.npy', 'state04.npy', 'state05.npy', 'state06.npy', 'state07.npy', 'state08.npy', 'state09.npy', 'state10.npy', 'state11.npy', 'state12.npy', 'state13.npy', 'state14.npy', 'state15.npy', 'state16.npy', 'state17.npy', 'state18.npy', 'state19.npy', 'state20.npy', 'state21.npy', 'state22.npy', 'state23.npy', 'state24.npy', 'state25.npy', 'state26.npy', 'state27.npy', 'state28.npy', 'state29.npy', 'state30.npy', 'state31.npy', 'state32.npy', 'state33.npy', 'state34.npy', 'state35.npy', 'state36.npy', 'state37.npy', 'state38.npy', 'state39.npy', 'state40.npy', 'state41.npy', 'state42.npy', 'state43.npy', 'state44.npy', 'state45.npy', 'state46.npy', 'state47.npy', 'state48.npy', 'state49.npy', 'state50.npy', 'state51.npy', 'state52.npy', 'state53.npy', 'state54.npy', 'state55.npy', 'state56.npy', 'state57.npy', 'state58.npy', 'state59.npy', 'state60.npy']
-        daz4 = ['state01.npy', 'state02.npy', 'state03.npy', 'state04.npy', 'state05.npy', 'state06.npy', 'state07.npy', 'state08.npy', 'state09.npy', 'state10.npy', 'state11.npy', 'state12.npy', 'state13.npy', 'state14.npy', 'state15.npy', 'state16.npy', 'state17.npy', 'state18.npy', 'state19.npy', 'state20.npy']
-        daz72 = ['state01.npy']
-        day = random.choice(daz60)
-        print(day)
-        data = np.load(day)
-        return data
 
-    def load_state_2(self):
-        #daz = ['state01.npy', 'state02.npy', 'state03.npy', 'state04.npy', 'state05.npy', 'state06.npy', 'state07.npy', 'state08.npy', 'state09.npy', 'state10.npy', 'state11.npy', 'state12.npy', 'state13.npy', 'state14.npy', 'state15.npy', 'state16.npy', 'state17.npy', 'state18.npy', 'state19.npy', 'state20.npy', 'state21.npy', 'state22.npy', 'state23.npy', 'state24.npy', 'state25.npy', 'state26.npy', 'state27.npy', 'state28.npy', 'state29.npy', 'state30.npy']
-        #daz40 = ['state01.npy', 'state02.npy', 'state03.npy', 'state04.npy', 'state05.npy', 'state06.npy', 'state07.npy', 'state08.npy', 'state09.npy', 'state10.npy', 'state11.npy', 'state12.npy', 'state13.npy', 'state14.npy', 'state15.npy', 'state16.npy', 'state17.npy', 'state18.npy', 'state19.npy', 'state20.npy', 'state21.npy', 'state22.npy', 'state23.npy', 'state24.npy', 'state25.npy', 'state26.npy', 'state27.npy', 'state28.npy', 'state29.npy', 'state30.npy', 'state31.npy', 'state32.npy', 'state33.npy', 'state34.npy', 'state35.npy', 'state36.npy', 'state37.npy', 'state38.npy', 'state39.npy', 'state40.npy']
-        #daz60 = ['state01.npy', 'state02.npy', 'state03.npy', 'state04.npy', 'state05.npy', 'state06.npy', 'state07.npy', 'state08.npy', 'state09.npy', 'state10.npy', 'state11.npy', 'state12.npy', 'state13.npy', 'state14.npy', 'state15.npy', 'state16.npy', 'state17.npy', 'state18.npy', 'state19.npy', 'state20.npy', 'state21.npy', 'state22.npy', 'state23.npy', 'state24.npy', 'state25.npy', 'state26.npy', 'state27.npy', 'state28.npy', 'state29.npy', 'state30.npy', 'state31.npy', 'state32.npy', 'state33.npy', 'state34.npy', 'state35.npy', 'state36.npy', 'state37.npy', 'state38.npy', 'state39.npy', 'state40.npy', 'state41.npy', 'state42.npy', 'state43.npy', 'state44.npy', 'state45.npy', 'state46.npy', 'state47.npy', 'state48.npy', 'state49.npy', 'state50.npy', 'state51.npy', 'state52.npy', 'state53.npy', 'state54.npy', 'state55.npy', 'state56.npy', 'state57.npy', 'state58.npy', 'state59.npy', 'state60.npy']
-        #daz4 = ['state01.npy', 'state02.npy', 'state03.npy', 'state04.npy', 'state05.npy', 'state06.npy', 'state07.npy', 'state08.npy', 'state09.npy', 'state10.npy', 'state11.npy', 'state12.npy', 'state13.npy', 'state14.npy', 'state15.npy', 'state16.npy', 'state17.npy', 'state18.npy', 'state19.npy', 'state20.npy']
-        
-        #day = random.choice()
-        #print(day)
-        #data = np.load('2016-1m.npy')
+    def load_state(self):
         day = random.choice(self.full_year)
         return day
     
     def time_to_array(self, data):
         for i in range(len(data)):
             date = data[i][5]
-            
-        #s = "2018-12-10T19:55:00.00000000Z"
             date = re.split('-|T|:|Z|', date)
             date = date[0:5]
-        #print(s)
             date = list(map(int, date))
-        
-        #datetime.datetime.today()
-        #datetime.datetime(s[0], s[1], s[2], s[3], s[4], 1, 173504))
             day = datetime.date(date[0], date[1], date[2]).weekday()
             hour = date[3]
             minute = date[4]

@@ -23,7 +23,7 @@ class MarketSim():
     
     def make_episode(self):
         if self.load == True:
-            self.state_full = self.data_grabber.load_state_2()
+            self.state_full = self.data_grabber.load_state()
         else:
             self.state_full = self.data_grabber.process_to_array()
 

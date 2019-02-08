@@ -15,6 +15,7 @@ from stable_baselines import ACKTR, PPO2
 from stable_baselines.deepq import DQN
 #from stable_baselines.deepq.policies import FeedForwardPolicy
 from ..env import Template_Gym
+from ..agents import CustomPolicy
 env = Template_Gym()
 
 
