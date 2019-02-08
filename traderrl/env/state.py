@@ -131,10 +131,11 @@ class MarketSim():
 
     def render(self):
         #print(f' State:{self.state}')
-        print(f'Price:{self.price}')
+        #print(f'Price:{self.price}')
         #print(f'diff:{self.diff}')
-        print(f'Count:{self.count}')
-        print(f'Reward:{self.reward}')
+        #print(f'Count:{self.count}')
+        #print(f'Reward:{self.reward}')
+        pass
 
 
     def state_maker(self):

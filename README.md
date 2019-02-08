@@ -40,4 +40,23 @@ A Hierarchical Multi-Agent Deep Reinforcement Learning trading system.
     ```bash
 	python .
 	```
-   
+
+## Todo
+- [ ] jupyter notebook
+- [ ] Comment code
+- [ ] remove unused code
+- [ ] tests
+- [ ] MarketSim
+- [ ] trade record
+- [ ] Live demo testing
+- [ ] win/loss percentage
+- [ ] change reward from balance to reward
+- [ ] automatic jpy or usd spread
+- [ ] none hard coded saves
+- [ ] graphs
+- [ ] eval counter for continous days trading
+- [ ] more indicators
+- [ ] time frame arg state
+- [ ] pair arg
+- [ ] pair config
+- [ ] eval or train arg

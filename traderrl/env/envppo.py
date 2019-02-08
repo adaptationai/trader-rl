@@ -1,6 +1,6 @@
 
 import numpy as np
-from state import *
+from .state import *
 
 class Template():
     """Base class for Unity ML environments using unityagents (v0.4)."""
