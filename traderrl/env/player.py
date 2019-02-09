@@ -135,10 +135,12 @@ class Player():
             p_price = pos[0]
             if pos[1] == 1:
                 close = m_price - self.half_spread
-                profit = close - p_price 
+                profit = close - p_price
+                self.long_positions.append([price, close, profit]) 
             if pos[1] == -1:
                 close = m_price + self.half_spread
                 profit = p_price - close
+                self.short_positions([price, close, profit])
             #print('m_price')
             #print(m_price)
             #print('placement')
@@ -320,6 +322,42 @@ class Player():
             print(f'Positions: {self.positions[0]}')
         else:
             print(f'Positions: None')
+    
+    
+    
+    def results(self):
+        self.results = []
+        self.wins = []
+        self.losses = []
+        self.trades = len(self.long_positions) + len(self.short_positions)
+        for position in self.long_positions:
+            if position[2] >= 0:
+                self.wins.append(position[2]
+            else:
+                self.losses.append(position[2])
+        for position in self.short_positions:
+            if position[2] >= 0:
+                self.wins.append(position[2]
+            else:
+                self.loses.append(position[2]
+        self.win_percentage = len(self.wins) / len(self.trades)
+        self.loss_percentage = len(self.losses) / len(self.trades)
+        self.win_mean = np.mean(self.wins)
+        self.loss_mean = np.mean(self.losses)
+        self.win_median = np.median(self.wins)
+        self.loss_median = np.median(self.losses)
+        self.win_max = np.max(self.wins)
+        self.loss_max = np.max(self.loses)
+        self.win_low = np.min(self.wins)
+        self.loss_low = np.min(self.loses)
+        print(f'Trades: {self.trades}, wins: {len(self.wins)}, losses: {len(self.losses)}, win/loss: {self.win_percentage}/{self.loss_percentage} ')
+        print(f'Win_mean: {self.win_mean}, win_median: {self.win_median}, win_max: {self.win_max}, win_low: {self.win_low}')
+        print(f'loss_mean: {self.loss_mean}, loss_median: {self.loss_median}, loss_max: {self.loss_max}, loss_low: {self.loss_low}')
+
+
+
+        return
+    
 
 
 

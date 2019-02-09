@@ -438,7 +438,7 @@ class MarketSim():
             lows.append(state[i][2])
         new_state.append(max(highs))
         new_state.append(min(lows))
-        new_state.append(state[1][3])
+        new_state.append(state[0][3])
 
         
 
