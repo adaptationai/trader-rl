@@ -350,13 +350,13 @@ class Player():
         self.loss_max = np.max(self.loses)
         self.win_low = np.min(self.wins)
         self.loss_low = np.min(self.loses)
-        print(f'Trades: {self.trades}, wins: {len(self.wins)}, losses: {len(self.losses)}, win/loss: {self.win_percentage}/{self.loss_percentage} ')
-        print(f'Win_mean: {self.win_mean}, win_median: {self.win_median}, win_max: {self.win_max}, win_low: {self.win_low}')
-        print(f'loss_mean: {self.loss_mean}, loss_median: {self.loss_median}, loss_max: {self.loss_max}, loss_low: {self.loss_low}')
+        #print(f'Trades: {self.trades}, wins: {len(self.wins)}, losses: {len(self.losses)}, win/loss: {self.win_percentage}/{self.loss_percentage} ')
+        #print(f'Win_mean: {self.win_mean}, win_median: {self.win_median}, win_max: {self.win_max}, win_low: {self.win_low}')
+        #print(f'loss_mean: {self.loss_mean}, loss_median: {self.loss_median}, loss_max: {self.loss_max}, loss_low: {self.loss_low}')
+        self.results.append([self.trades, len(self.wins), len(self.losses), self.win_percentage, self.loss_percentage, self.win_mean, self.loss_mean, self.win_median, self.loss_median, self.win_max, self.loss_max, self.win_low, self.loss_low])
 
 
-
-        return
+        return 
     
 
 
