@@ -356,7 +356,7 @@ class Player():
         self.results.append([self.trades, len(self.wins), len(self.losses), self.win_percentage, self.loss_percentage, self.win_mean, self.loss_mean, self.win_median, self.loss_median, self.win_max, self.loss_max, self.win_low, self.loss_low])
 
 
-        return 
+        return self.results
     
 
 
