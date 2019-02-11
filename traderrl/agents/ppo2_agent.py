@@ -65,6 +65,7 @@ class PPO2_SB():
         :return: (float) Mean reward
         """
         env_id = 'default'
+        num_e = 1
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_env)])
 
         episode_rewards = [[0.0] for _ in range(self.env.num_envs)]

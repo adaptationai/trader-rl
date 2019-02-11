@@ -3,6 +3,7 @@
 #sys.path.append('..')  
 import numpy as np
 from ..common import DataGrabber
+from .state import MarketLive
 #from utilities import DataGrabber
 import torch
 import numpy
@@ -22,6 +23,8 @@ class Player():
         self.spread = 0.0002
         self.half_spread = 0.0001
         self.diff = 0
+        self.live_market = MarketLive()
+        self.live = False
         #self.actions = [self.open_position_long(self.m_price), self.open_position_short(self.m_price), self.close_position(self.m_price), self.hold_position(self.m_price)]
         
 
@@ -67,6 +70,9 @@ class Player():
                 self.reward = 0
                 #self.reward = profit * 10000
                 #elf.update()
+                if self.live:
+                    self.live_market.market_order_long()
+                
             else:
                 self.reward = 0
         else:
@@ -100,6 +106,8 @@ class Player():
                 self.reward = 0
                 #self.reward = profit * 10000
                 #elf.update()
+                if self.live:
+                    self.live_market.market_order_short()
             else:
                 self.reward = 0
 
@@ -137,10 +145,14 @@ class Player():
                 close = m_price - self.half_spread
                 profit = close - p_price
                 self.long_positions.append([price, close, profit]) 
+                if self.live:
+                    self.live_market.position_close_long()
             if pos[1] == -1:
                 close = m_price + self.half_spread
                 profit = p_price - close
                 self.short_positions([price, close, profit])
+                if self.live:
+                    self.live_market.position_close_short()
             #print('m_price')
             #print(m_price)
             #print('placement')
@@ -285,6 +297,7 @@ class Player():
             self.hold_position(m_price)
         else:
             self.hold_position(m_price)
+
 
     def details(self, m_price):
         #self.update(m_price)

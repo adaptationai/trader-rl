@@ -28,6 +28,7 @@ class MarketSim():
         self.count = 0
         self.diff = 0
         self.load = True
+        self.live = False
     
     def make_episode(self):
         if self.load == True:
@@ -37,9 +38,12 @@ class MarketSim():
 
 
     def make_current_state(self, count):
-        start = (0+count)
-        end = (1440+count)
-        self.state = self.state_full[start:end]
+        if self.live == True:
+            self.state = MarketLive.candles_live()
+        else:
+            start = (0+count)
+            end = (1440+count)
+            self.state = self.state_full[start:end]
         return self.state
 
     def get_price(self):
@@ -460,7 +464,13 @@ class MarketLive():
         self.accountID = Auth.accountID 
         self.access_token = Auth.access_token
 
-    def market_order(self):
+    def market_order_long(self):
+        client = API(access_token=self.access_token)
+        mo = MarketOrderRequest(instrument="EUR_USD", units=10000)
+        r = orders.OrderCreate(self.accountID, data=mo.data)
+        rv = client.request(r)
+
+    def market_order_short(self):
         client = API(access_token=self.access_token)
         mo = MarketOrderRequest(instrument="EUR_USD", units=10000)
         r = orders.OrderCreate(self.accountID, data=mo.data)
@@ -478,15 +488,21 @@ class MarketLive():
         r = orders.OrderCreate(self.accountID, data=ordr.data)
         rv = client.request(r)
 
-    def position_close(self):
+    def position_close_long(self):
         client = API(access_token=self.access_token)
         ordr = PositionCloseRequest(longUnits=10000)
         r = position.PositionClose(self.accountID, instrument="EUR_USD", data=ordr.data)
         rv = client.request(r)
 
+    def position_close_short(self):
+        client = API(access_token=self.access_token)
+        ordr = PositionCloseRequest(longUnits=-10000)
+        r = position.PositionClose(self.accountID, instrument="EUR_USD", data=ordr.data)
+        rv = client.request(r)
+
     def candles_live(self):
         client = API(access_token=self.access_token)
-        params = {"count": 4320, "granularity": "M1"}
+        params = {"count": 1440, "granularity": "M1"}
         r = instruments.InstrumentsCandles(instrument="EUR_USD", params=params)
         data = client.request(r)
         data = self.data_grabber.data_converted(data)
