@@ -8,6 +8,7 @@ import random
 import json
 from oandapyV20 import API
 import oandapyV20.endpoints.orders as orders
+import oandapyV20.endpoints.instruments as instruments
 from oandapyV20.contrib.requests import MarketOrderRequest, LimitOrderRequest, MITOrderRequest, PositionCloseRequest
 
 from .auth import Auth
@@ -473,18 +474,29 @@ class MarketLive():
         rv = client.request(r)
 
     def market_if_touched(self):
-        accountID = "..."
-        client = API(access_token=...)
+        accountID = Auth.accountID
+        client = API(access_token=Auth.access_token)
         ordr = MITOrderRequest(instrument="EUR_USD", units=10000, price=1.08)
         r = orders.OrderCreate(accountID, data=ordr.data)
         rv = client.request(r)
 
     def position_close(self):
-        accountID = "..."
-        client = API(access_token=...)
+        accountID = Auth.accountID
+        client = API(access_token=Auth.access_token)
         ordr = PositionCloseRequest(longUnits=10000)
         r = position.PositionClose(accountID, instrument="EUR_USD", data=ordr.data)
         rv = client.request(r)
+
+    def candles_live(self):
+        accountID = Auth.accountID
+        client = API(access_token=Auth.access_token)
+        params = {"count": 4320, "granularity": "M1"}
+        r = instruments.InstrumentsCandles(instrument="EUR_USD", params=params)
+        data = client.request(r)
+        data = self.data_grabber.data_converted(data)
+        data = self.data_grabber.time_to_array(data)
+        data = self.data_grabber.toarray(data)
+        return data
 
 
 #test = MarketSim()
@@ -494,3 +506,5 @@ class MarketLive():
 #print(len(k))
 #for step in range(len(test.state)):
     #test.step(1)
+#test = MarketLive
+#test.candles_live
