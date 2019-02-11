@@ -512,7 +512,7 @@ class MarketLive():
 
     def live_step_delay(self):
         current_time = time.time()
-        time_to_sleep = 60 - (current_time % 60)
+        time_to_sleep = 320 - (current_time % 320)
         time.sleep(time_to_sleep)
 
 
