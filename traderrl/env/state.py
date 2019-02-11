@@ -10,6 +10,7 @@ from oandapyV20 import API
 import oandapyV20.endpoints.orders as orders
 import oandapyV20.endpoints.instruments as instruments
 from oandapyV20.contrib.requests import MarketOrderRequest, LimitOrderRequest, MITOrderRequest, PositionCloseRequest
+import time
 
 from .auth import Auth
 #from ..common import DataGrabber
@@ -456,40 +457,35 @@ class MarketSim():
 
 class MarketLive():
     def __init__(self):
-        pass
-
+        self.accountID = Auth.accountID 
+        self.access_token = Auth.access_token
 
     def market_order(self):
-        accountID = Auth.accountID
-        client = API(access_token=Auth.access_token)
+        client = API(access_token=self.access_token)
         mo = MarketOrderRequest(instrument="EUR_USD", units=10000)
-        r = orders.OrderCreate(accountID, data=mo.data)
+        r = orders.OrderCreate(self.accountID, data=mo.data)
         rv = client.request(r)
 
     def limit_order(self):
-        accountID = Auth.accountID
-        client = API(access_token=Auth.access_token)
+        client = API(access_token=self.access_token)
         ordr = LimitOrderRequest(instrument="EUR_USD", units=10000, price=1.08)
-        r = orders.orderCreate(accountID, data=ordr.data)
+        r = orders.orderCreate(self.accountID, data=ordr.data)
         rv = client.request(r)
 
     def market_if_touched(self):
-        accountID = Auth.accountID
-        client = API(access_token=Auth.access_token)
+        client = API(access_token=self.access_token)
         ordr = MITOrderRequest(instrument="EUR_USD", units=10000, price=1.08)
-        r = orders.OrderCreate(accountID, data=ordr.data)
+        r = orders.OrderCreate(self.accountID, data=ordr.data)
         rv = client.request(r)
 
     def position_close(self):
-        accountID = Auth.accountID
-        client = API(access_token=Auth.access_token)
+        client = API(access_token=self.access_token)
         ordr = PositionCloseRequest(longUnits=10000)
-        r = position.PositionClose(accountID, instrument="EUR_USD", data=ordr.data)
+        r = position.PositionClose(self.accountID, instrument="EUR_USD", data=ordr.data)
         rv = client.request(r)
 
     def candles_live(self):
-        accountID = Auth.accountID
-        client = API(access_token=Auth.access_token)
+        client = API(access_token=self.access_token)
         params = {"count": 4320, "granularity": "M1"}
         r = instruments.InstrumentsCandles(instrument="EUR_USD", params=params)
         data = client.request(r)
@@ -497,6 +493,11 @@ class MarketLive():
         data = self.data_grabber.time_to_array(data)
         data = self.data_grabber.toarray(data)
         return data
+
+    def live_step_delay(self):
+        current_time = time.time()
+        time_to_sleep = 60 - (current_time % 60)
+        time.sleep(time_to_sleep)
 
 
 #test = MarketSim()
