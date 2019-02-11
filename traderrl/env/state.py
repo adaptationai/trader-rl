@@ -5,6 +5,12 @@ from .player import Player
 from ..common import DataGrabber
 import numpy
 import random
+import json
+from oandapyV20 import API
+import oandapyV20.endpoints.orders as orders
+from oandapyV20.contrib.requests import MarketOrderRequest, LimitOrderRequest, MITOrderRequest, PositionCloseRequest
+
+from .auth import Auth
 #from ..common import DataGrabber
 class MarketSim():
     def __init__(self):
@@ -451,6 +457,34 @@ class MarketLive():
     def __init__(self):
         pass
 
+
+    def market_order(self):
+        accountID = Auth.accountID
+        client = API(access_token=Auth.access_token)
+        mo = MarketOrderRequest(instrument="EUR_USD", units=10000)
+        r = orders.OrderCreate(accountID, data=mo.data)
+        rv = client.request(r)
+
+    def limit_order(self):
+        accountID = Auth.accountID
+        client = API(access_token=Auth.access_token)
+        ordr = LimitOrderRequest(instrument="EUR_USD", units=10000, price=1.08)
+        r = orders.orderCreate(accountID, data=ordr.data)
+        rv = client.request(r)
+
+    def market_if_touched(self):
+        accountID = "..."
+        client = API(access_token=...)
+        ordr = MITOrderRequest(instrument="EUR_USD", units=10000, price=1.08)
+        r = orders.OrderCreate(accountID, data=ordr.data)
+        rv = client.request(r)
+
+    def position_close(self):
+        accountID = "..."
+        client = API(access_token=...)
+        ordr = PositionCloseRequest(longUnits=10000)
+        r = position.PositionClose(accountID, instrument="EUR_USD", data=ordr.data)
+        rv = client.request(r)
 
 
 #test = MarketSim()
