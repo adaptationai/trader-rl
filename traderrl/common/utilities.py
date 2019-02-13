@@ -10,6 +10,8 @@ import time
 import cv2
 import mss
 import numpy
+import re
+import datetime
 
 
 class DataGrabber():
@@ -18,8 +20,8 @@ class DataGrabber():
     def __init__(self):
         
         self.love = 14
-        self.auth = Auth()
-        self.client = oandapyV20.API(access_token=self.auth.access_token)
+        self.auth = '4f6b866836d8780fd3757d0e1beafcc6-77882a7b0bed7ecc2f29b56a3abe9576'
+        self.client = oandapyV20.API(access_token=self.auth)
         self.years = ['2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008']
         self.instrument = ['EUR_USD', 'AUD_USD', 'GBP_USD', 'NZD_USD', 'USD_CHF', 'USD_CAD']
         self.time = ['00:00:00']
@@ -29,7 +31,7 @@ class DataGrabber():
         self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
         self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         self.granularity= ['M1', 'M5', 'M15', 'M30', 'H1', 'H4']
-        self.full_year = np.load('evaleuro2018192.npy')
+        self.full_year = np.load('data/test.npy')
         
 
     def get_candles(self, _from,  count, granularity, instrument):
@@ -118,7 +120,7 @@ class DataGrabber():
                         data = self.toarray(data)
             
                         full_data.append(data)
-        np.save('evaleuro2018jan192.npy', full_data)
+        np.save('data/test.npy', full_data)
 
         return full_data
 

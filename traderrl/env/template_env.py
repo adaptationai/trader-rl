@@ -7,7 +7,7 @@ from gym.utils import seeding
 #env = WhatIsTheColor()
 
 import numpy as np
-from .env import Template
+from .env2 import Template
 
 
 class Template_Gym(gym.Env):

@@ -3,10 +3,13 @@
 #sys.path.append('..')  
 import numpy as np
 from ..common import DataGrabber
-from .state import MarketLive
+from .test import Tester
+from .test import Moose
+from .market_live import MarketLive
+
 #from utilities import DataGrabber
-import torch
-import numpy
+#import torch
+#import numpy
 class Player():
     def __init__(self):
         self.balance = 0
@@ -144,13 +147,13 @@ class Player():
             if pos[1] == 1:
                 close = m_price - self.half_spread
                 profit = close - p_price
-                self.long_positions.append([price, close, profit]) 
+                self.long_positions.append([p_price, close, profit]) 
                 if self.live:
                     self.live_market.position_close_long()
             if pos[1] == -1:
                 close = m_price + self.half_spread
                 profit = p_price - close
-                self.short_positions([price, close, profit])
+                self.short_positions.append([p_price, close, profit])
                 if self.live:
                     self.live_market.position_close_short()
             #print('m_price')
@@ -325,16 +328,17 @@ class Player():
 
     def render(self):
         #self.update(self.m_price)
-        print(f'Player Details')
-        print(f'Pips: {self.pips}')
-        print(f'Pips_net: {self.pips_net}')
-        print(f'Balance: {self.balance}')
-        print(f'Net_balance: {self.net_balance}')
-        print(f'Placement:: {self.placement}')
-        if len(self.positions) == 1:
-            print(f'Positions: {self.positions[0]}')
-        else:
-            print(f'Positions: None')
+        #print(f'Player Details')
+        #print(f'Pips: {self.pips}')
+        #print(f'Pips_net: {self.pips_net}')
+        #print(f'Balance: {self.balance}')
+        #print(f'Net_balance: {self.net_balance}')
+        #print(f'Placement:: {self.placement}')
+        #if len(self.positions) == 1:
+            #print(f'Positions: {self.positions[0]}')
+        #else:
+            #print(f'Positions: None')
+        pass
     
     
     
@@ -345,14 +349,14 @@ class Player():
         self.trades = len(self.long_positions) + len(self.short_positions)
         for position in self.long_positions:
             if position[2] >= 0:
-                self.wins.append(position[2]
+                self.wins.append(position[2])
             else:
                 self.losses.append(position[2])
         for position in self.short_positions:
             if position[2] >= 0:
-                self.wins.append(position[2]
+                self.wins.append(position[2])
             else:
-                self.loses.append(position[2]
+                self.loses.append(position[2])
         self.win_percentage = len(self.wins) / len(self.trades)
         self.loss_percentage = len(self.losses) / len(self.trades)
         self.win_mean = np.mean(self.wins)

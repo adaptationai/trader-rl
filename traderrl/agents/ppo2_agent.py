@@ -15,7 +15,7 @@ from stable_baselines import ACKTR, PPO2
 from stable_baselines.deepq import DQN
 #from stable_baselines.deepq.policies import FeedForwardPolicy
 from ..env import Template_Gym
-from ..agents import CustomPolicy
+from ..common import CustomPolicy
 env = Template_Gym()
 
 
@@ -44,14 +44,14 @@ class PPO2_SB():
         return _init
     
 
-    def train(self, game, state, num_e=1, n_timesteps=1000000, save='./default'):
+    def train(self, num_e=1, n_timesteps=1000000, save='default'):
         env_id = "default"
-        num_e = 16  # Number of processes to use
+        num_e = 1  # Number of processes to use
         # Create the vectorized environment
         #env = DummyVecEnv([lambda: env])
 
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_e)])
-        self.model = PPO2(CustomPolicy, env, verbose=1, learning_rate=1e-5, tensorboard_log="default" )
+        self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
         #self.model = PPO2.load("trader10year15m-32bk-reward-lr5-100m-2x256-20y-shaped-4", env, policy=CustomPolicy, tensorboard_log="./ppo2full10/" )
         self.model.learn(n_timesteps)
         self.model.save(save)

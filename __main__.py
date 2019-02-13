@@ -1,18 +1,17 @@
-import argparse
+#import argparse
 
 import gym
 import numpy as np
+from traderrl import PPO2_SB
 from traderrl import DataGrabber
-from traderrl import MarketSim
-from traderrl import Template
-from traderrl import Template_Gym
-from traderrl import Baseline_Details
-from traderrl import TraderRl
-from traderrl import Train51
 #test = Baseline_Details()
 #test = Train51()
 
 def main():
+    #test = DataGrabber()
+    #test.process_to_array_2()
+    test = PPO2_SB()
+    test.train()
     
     
     

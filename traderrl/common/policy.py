@@ -5,7 +5,6 @@ class CustomPolicy(FeedForwardPolicy):
     def __init__(self, *args, **kwargs):
         super(CustomPolicy, self).__init__(*args, **kwargs,
                                            layers=[256, 256, 256],
-                                           layer_norm=True,
                                             feature_extraction="mlp")
                     
 class CustomPolicy_2(LstmPolicy):
