@@ -4,6 +4,7 @@ import gym
 import numpy as np
 from traderrl import PPO2_SB
 from traderrl import DataGrabber
+from traderrl import MarketLive
 #test = Baseline_Details()
 #test = Train51()
 
@@ -11,7 +12,10 @@ def main():
     #test = DataGrabber()
     #test.process_to_array_2()
     test = PPO2_SB()
-    test.train()
+    #test.train()
+    test.evaluate()
+    #test = MarketLive()
+    #test.position_close_long()
     
     
     

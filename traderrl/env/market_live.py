@@ -28,7 +28,7 @@ class MarketLive():
 
     def market_order_short(self):
         client = API(access_token=self.access_token)
-        mo = MarketOrderRequest(instrument="EUR_USD", units=10000)
+        mo = MarketOrderRequest(instrument="EUR_USD", units=-10000)
         r = orders.OrderCreate(self.accountID, data=mo.data)
         rv = client.request(r)
 
@@ -52,7 +52,7 @@ class MarketLive():
 
     def position_close_short(self):
         client = API(access_token=self.access_token)
-        ordr = PositionCloseRequest(longUnits=-10000)
+        ordr = PositionCloseRequest(shortUnits=10000)
         r = position.PositionClose(self.accountID, instrument="EUR_USD", data=ordr.data)
         rv = client.request(r)
 
@@ -69,4 +69,5 @@ class MarketLive():
     def live_step_delay(self):
         current_time = time.time()
         time_to_sleep = 320 - (current_time % 320)
+        #time_to_sleep = 60 - (current_time % 60)
         time.sleep(time_to_sleep)

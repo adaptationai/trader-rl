@@ -20,8 +20,8 @@ class DataGrabber():
     def __init__(self):
         
         self.love = 14
-        self.auth = '4f6b866836d8780fd3757d0e1beafcc6-77882a7b0bed7ecc2f29b56a3abe9576'
-        self.client = oandapyV20.API(access_token=self.auth)
+        self.auth = Auth()
+        self.client = oandapyV20.API(access_token=self.auth.access_token)
         self.years = ['2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008']
         self.instrument = ['EUR_USD', 'AUD_USD', 'GBP_USD', 'NZD_USD', 'USD_CHF', 'USD_CAD']
         self.time = ['00:00:00']
@@ -104,6 +104,8 @@ class DataGrabber():
         full_data = []
         #self.years = ['2018']
         #self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11']
+        self.hist = 4320
+        self.t_frame = "M1"
         self.month = ['01']
         self.instrument = ['EUR_USD']
         for i in self.instrument:
@@ -114,13 +116,13 @@ class DataGrabber():
                     else:
                         day = self.day
                     for d in day:
-                        data = self.get_candles(y+'-'+m+'-'+d+'T00:00:00Z', 4320, "M1", i)
+                        data = self.get_candles(y+'-'+m+'-'+d+'T00:00:00Z', self.hist, self.t_frame, i)
                         data = self.data_converted(data)
                         data = self.time_to_array(data)
                         data = self.toarray(data)
             
                         full_data.append(data)
-        np.save('data/test.npy', full_data)
+        np.save('data/'+ self.instrument + str(self.hist) + self.t_frame + '.npy', full_data)
 
         return full_data
 
@@ -129,7 +131,7 @@ class DataGrabber():
         data = self.data_converted(data)
         data = self.toarray(data)
         data = self.normalize(data)
-        data = self.totensor(datalla)
+        data = self.totensor(data)
         return data
 
     def flatten_full(self, markeallt, user):

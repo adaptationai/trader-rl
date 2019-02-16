@@ -51,6 +51,7 @@ class PPO2_SB():
         #env = DummyVecEnv([lambda: env])
 
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_e)])
+        self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
         self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
         #self.model = PPO2.load("trader10year15m-32bk-reward-lr5-100m-2x256-20y-shaped-4", env, policy=CustomPolicy, tensorboard_log="./ppo2full10/" )
         self.model.learn(n_timesteps)
@@ -67,7 +68,9 @@ class PPO2_SB():
         env_id = 'default'
         num_e = 1
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_env)])
-
+        #self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
+        self.model = PPO2.load("data/test", self.env, policy=CustomPolicy, tensorboard_log="./ppocnn/" )
+        self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
         episode_rewards = [[0.0] for _ in range(self.env.num_envs)]
         obs = self.env.reset()
         for i in range(num_steps):

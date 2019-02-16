@@ -27,7 +27,7 @@ class Player():
         self.half_spread = 0.0001
         self.diff = 0
         self.live_market = MarketLive()
-        self.live = False
+        self.live = True
         #self.actions = [self.open_position_long(self.m_price), self.open_position_short(self.m_price), self.close_position(self.m_price), self.hold_position(self.m_price)]
         
 
@@ -51,6 +51,8 @@ class Player():
             buy = m_price + self.half_spread
             self.positions.append([(buy), 1])
             #self.pips += -2
+            if self.live:
+                    self.live_market.market_order_long()
             self.reward = 0
         elif len(self.positions) == 1:
             self.update(m_price)
@@ -74,6 +76,7 @@ class Player():
                 #self.reward = profit * 10000
                 #elf.update()
                 if self.live:
+                    self.live_market.position_close_short()
                     self.live_market.market_order_long()
                 
             else:
@@ -87,6 +90,8 @@ class Player():
             sell = m_price - self.half_spread
             self.positions.append([(sell), -1])
             #self.pips += -2
+            if self.live:
+                    self.live_market.market_order_short()
             self.reward = 0
         elif len(self.positions) == 1:
             self.update(m_price)
@@ -110,6 +115,7 @@ class Player():
                 #self.reward = profit * 10000
                 #elf.update()
                 if self.live:
+                    self.live_market.position_close_long()
                     self.live_market.market_order_short()
             else:
                 self.reward = 0
@@ -328,21 +334,21 @@ class Player():
 
     def render(self):
         #self.update(self.m_price)
-        #print(f'Player Details')
-        #print(f'Pips: {self.pips}')
-        #print(f'Pips_net: {self.pips_net}')
-        #print(f'Balance: {self.balance}')
-        #print(f'Net_balance: {self.net_balance}')
-        #print(f'Placement:: {self.placement}')
-        #if len(self.positions) == 1:
-            #print(f'Positions: {self.positions[0]}')
-        #else:
-            #print(f'Positions: None')
-        pass
+        print(f'Player Details')
+        print(f'Pips: {self.pips}')
+        print(f'Pips_net: {self.pips_net}')
+        print(f'Balance: {self.balance}')
+        print(f'Net_balance: {self.net_balance}')
+        print(f'Placement:: {self.placement}')
+        if len(self.positions) == 1:
+            print(f'Positions: {self.positions[0]}')
+        else:
+            print(f'Positions: None')
     
     
     
-    def results(self):
+    
+    def result(self):
         self.results = []
         self.wins = []
         self.losses = []
@@ -356,21 +362,37 @@ class Player():
             if position[2] >= 0:
                 self.wins.append(position[2])
             else:
-                self.loses.append(position[2])
-        self.win_percentage = len(self.wins) / len(self.trades)
-        self.loss_percentage = len(self.losses) / len(self.trades)
-        self.win_mean = np.mean(self.wins)
-        self.loss_mean = np.mean(self.losses)
-        self.win_median = np.median(self.wins)
-        self.loss_median = np.median(self.losses)
-        self.win_max = np.max(self.wins)
-        self.loss_max = np.max(self.loses)
-        self.win_low = np.min(self.wins)
-        self.loss_low = np.min(self.loses)
-        #print(f'Trades: {self.trades}, wins: {len(self.wins)}, losses: {len(self.losses)}, win/loss: {self.win_percentage}/{self.loss_percentage} ')
-        #print(f'Win_mean: {self.win_mean}, win_median: {self.win_median}, win_max: {self.win_max}, win_low: {self.win_low}')
-        #print(f'loss_mean: {self.loss_mean}, loss_median: {self.loss_median}, loss_max: {self.loss_max}, loss_low: {self.loss_low}')
-        self.results.append([self.trades, len(self.wins), len(self.losses), self.win_percentage, self.loss_percentage, self.win_mean, self.loss_mean, self.win_median, self.loss_median, self.win_max, self.loss_max, self.win_low, self.loss_low])
+                self.losses.append(position[2])
+        if self.trades > 0:
+            self.win_percentage = len(self.wins) / self.trades
+            self.loss_percentage = len(self.losses) / self.trades
+        else:
+            self.win_percentage = 0
+            self.loss_percentage = 0
+        if len(self.wins) > 0:
+            self.win_mean = np.mean(self.wins)
+            self.win_median = np.median(self.wins)
+            self.win_max = np.max(self.wins)
+            self.win_low = np.min(self.wins)
+        else:
+            self.win_mean = 0
+            self.win_median = 0
+            self.win_max = 0
+            self.win_low = 0
+        if len(self.losses) > 0:
+            self.loss_mean = np.mean(self.losses)
+            self.loss_median = np.median(self.losses)
+            self.loss_max = np.max(self.losses)
+            self.loss_low = np.min(self.losses)
+        else:
+            self.loss_mean = 0
+            self.loss_median = 0
+            self.loss_max = 0
+            self.loss_low = 0
+        print(f'Trades: {self.trades}, wins: {len(self.wins)}, losses: {len(self.losses)}, win/loss: {self.win_percentage}/{self.loss_percentage} ')
+        print(f'Win_mean: {self.win_mean}, win_median: {self.win_median}, win_max: {self.win_max}, win_low: {self.win_low}')
+        print(f'loss_mean: {self.loss_mean}, loss_median: {self.loss_median}, loss_max: {self.loss_max}, loss_low: {self.loss_low}')
+        #self.results.append([self.trades, len(self.wins), len(self.losses), self.win_percentage, self.loss_percentage, self.win_mean, self.loss_mean, self.win_median, self.loss_median, self.win_max, self.loss_max, self.win_low, self.loss_low])
 
 
         return self.results

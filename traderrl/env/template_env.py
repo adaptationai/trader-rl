@@ -36,7 +36,7 @@ class Template_Gym(gym.Env):
         # observation is the x, y coordinate of the grid
         #low = np.zeros(0, dtype=int)
         #high =  np.array(1, dtype=int) - np.ones(len(self.maze_size), dtype=int)
-        self.observation_space = spaces.Box(low=-1000, high=1000, shape=(72,))
+        self.observation_space = spaces.Box(low=-100000, high=100000, shape=(72,))
         #print("obs")
         #print (self.observation_space)
 
