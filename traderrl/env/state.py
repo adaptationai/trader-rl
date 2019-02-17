@@ -113,7 +113,7 @@ class MarketSim():
         market = self.state_over_time(self.state)
         #market = np.array([self.price])
         count = np.array([self.count])
-        state = self.data_grabber.flatten(market, user, count)
+        state = self.data_grabber.flatten(market, user)
         #state = self.data_grabber.scaled(state)
         return state
 

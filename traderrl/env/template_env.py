@@ -25,7 +25,7 @@ class Template_Gym(gym.Env):
         self.done = False
         self.state = None
         self.action_dim = 3
-        self.state_dim = 72
+        self.state_dim = 71
         self.num_envs = 1
         self.num_envs_per_sub_batch = 1
 
@@ -36,7 +36,7 @@ class Template_Gym(gym.Env):
         # observation is the x, y coordinate of the grid
         #low = np.zeros(0, dtype=int)
         #high =  np.array(1, dtype=int) - np.ones(len(self.maze_size), dtype=int)
-        self.observation_space = spaces.Box(low=-100000, high=100000, shape=(72,))
+        self.observation_space = spaces.Box(low=-100000, high=100000, shape=(71,))
         #print("obs")
         #print (self.observation_space)
 
