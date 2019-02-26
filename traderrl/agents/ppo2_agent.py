@@ -69,7 +69,7 @@ class PPO2_SB():
         num_e = 1
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_env)])
         #self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
-        self.model = PPO2.load("data/ppo2-so-6-2", self.env, policy=CustomPolicy, tensorboard_log="./ppocnn/" )
+        self.model = PPO2.load("data/ppo2_so-6-2", self.env, policy=CustomPolicy, tensorboard_log="./ppocnn/" )
         self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
         episode_rewards = [[0.0] for _ in range(self.env.num_envs)]
         obs = self.env.reset()
