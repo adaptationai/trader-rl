@@ -13,7 +13,7 @@ def main():
     #test.process_to_array_2()
     test = PPO2_SB()
     test.train()
-    t#est.evaluate()
+    #test.evaluate()
     #test = MarketLive()
     #test.position_close_long()
     
