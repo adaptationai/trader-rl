@@ -17,5 +17,8 @@ oandapyV20
 pyti
 numpy
 stable-baselines
+opencv-python
+mss
+
 
 
