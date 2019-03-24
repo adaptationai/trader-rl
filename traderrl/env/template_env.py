@@ -28,7 +28,10 @@ class Template_Gym(gym.Env):
         self.state_dim = 71
         self.num_envs = 1
         self.num_envs_per_sub_batch = 1
-
+        self.total_pips = []
+        self.player = self.env.player
+        self.pips = self.env.pips
+        self.starter = 0
 
         # forward or backward in each dimension
         self.action_space = spaces.Discrete(3)
@@ -65,11 +68,18 @@ class Template_Gym(gym.Env):
         #self.state = self.env.generate_number()
         #self.env.display()
         #print(action)
-        self.next_state, self.reward, self.done = self.env.step(action)
+        #self.placement = self.env.placement
+        self.next_state, self.reward, self.done, self.pips = self.env.step(action)
         #self.info = 0
         #print(self.reward)
         self.info = { 'pnl':1, 'nav':1, 'costs':1 }
         #self.next_state = self.next_state.tolist()
+        self.total_pips.append(self.pips)
+        if self.done:
+            print("total pips")
+            print(np.sum(self.total_pips))
+            print(len(self.total_pips))
+            #self.starter += 1
         return self.next_state, self.reward, self.done, self.info
 
     def reset(self):

@@ -17,7 +17,7 @@ from .market_live import MarketLive
 from ..common import Auth
 #from ..common import DataGrabber
 class MarketSim():
-    def __init__(self):
+    def __init__(self, start):
         self.love = 14
         self.player = Player()
         self.actions = [1,2,3,4]
@@ -30,12 +30,15 @@ class MarketSim():
         self.count = 0
         self.diff = 0
         self.load = True
-        self.live = True
+        self.live = False
         self.market_live = MarketLive()
+        self.pips = self.player.pips
+        self.total_pips = []
+        self.start = start
     
     def make_episode(self):
         if self.load == True:
-            self.state_full = self.data_grabber.load_state()
+            self.state_full = self.data_grabber.load_state(self.start)
         else:
             self.state_full = self.data_grabber.process_to_array()
 
@@ -44,8 +47,8 @@ class MarketSim():
         if self.live == True:
             self.state = self.market_live.candles_live()
         else:
-            start = (0+count)
-            end = (1440+count)
+            start = (0+self.starter+count)
+            end = (1440+self.starter+count)
             self.state = self.state_full[start:end]
         return self.state
 
@@ -60,12 +63,13 @@ class MarketSim():
     def step(self, action):
         self.count += 5
         self.render()
-        self.player.render()
-        self.player.result()
+        #self.player.render()
+        #self.player.result()
         self.get_price()
         self.get_diff()
         d1 = self.player.net_balance
         pl1 = d1+10000
+        self.pips = self.player.pips
         self.player.action(self.price, action)
         if self.live:
             self.market_live.live_step_delay()
@@ -83,11 +87,17 @@ class MarketSim():
         self.reward = rr
         state = self.state_maker()
         done = self.done(self.count)
+        if done:
+            self.pips = self.player.pips
+        else:
+            self.pips = 0
         
-        return state, self.reward, done
+        return state, self.reward, done, self.pips
 
 
     def reset(self):
+        self.starter = 720
+        #self.starter = np.random.random_integers(0,1440)
         self.count = 0
         self.make_episode()
         self.state = self.make_current_state(self.count)
@@ -125,6 +135,7 @@ class MarketSim():
         if count == 1440:
             self.render()
             self.player.render()
+            self.player.result()
             return True
         else:
             return False 
@@ -317,7 +328,7 @@ class MarketSim():
         aavol8h = self.average_vol(state8h)
         aavol16h = self.average_vol(state16h)
         aavolday = self.average_vol(stateday)
-        #candle1 = self.candle_maker(state[-1:])
+        candle1 = self.candle_maker(state[-1:])
         candle5 = self.candle_maker(state[-5:])
         
         candle15 = self.candle_maker(state[-15:])
@@ -348,7 +359,8 @@ class MarketSim():
         #new_state.append([cl, hi, lo, op, v, day, hour, minute, cl2, hi2, lo2, op2, v2, day2, hour2, minute2, cl3, hi3, lo3, op3, v3, day3, hour3, minute3, cl4, hi4, lo4, op4, v4, day4, hour4, minute4, cl5, hi5, lo5, op5, v5, day5, hour5, minute5, cl6, hi6, lo6, op6, v6, day6, hour6, minute6, cl7, hi7, lo7, op7, v7, day7, hour7, minute7, cl8, hi8, lo8, op8, v8, day8, hour8, minute8, cl9, hi9, lo9, op9, v9, day9, hour9, minute9, cl10, hi10, lo10, op10, v10, day10, hour10, minute10, clnow, hinow, lonow, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr14, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av30, av1h, av2h, av4h, av8h, av16h, avday, md30, md1h, md2h, md4h, md8h, md16h, mdday])
         #new_state.append([cl, hi, lo, op, v, day, hour, minute, clnow, hinow, lonow, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr15, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av30, av1h, av2h, av4h, av8h, av16h, avday, md30, md1h, md2h, md4h, md8h, md16h, mdday])
         new_state.append([cl, hi, lo, op, v, day, hour, minute, clnow, hinow, lonow, cl5, cl15, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr, atr5, atr15, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av5, av15, av30, av1h, av2h, av4h, av8h, av16h, avday, md5, md15, md30, md1h, md2h, md4h, md8h, md16h, mdday, aavol, aavol5, aavol15, aavol30, aavol1h, aavol2h, aavol4h, aavol8h, aavol16h, aavolday, so1h, so2h, so4h, so8h, so16h, soday])
-
+        #new_state.append([cl, hi, lo, op, v, day, hour, minute, candle5[0], candle5[1], candle5[2], candle5[3], candle15[0], candle15[1], candle15[2], candle15[3], candle30[0], candle30[1], candle30[2], candle30[3], candle1h[0], candle1h[1], candle1h[2], candle1h[3], candle2h[0], candle2h[1], candle2h[2], candle2h[3], candle4h[0], candle4h[1], candle4h[2], candle4h[3], candle8h[0], candle8h[1], candle8h[2], candle8h[3], candle16h[0], candle16h[1], candle16h[2], candle16h[3], candleday[0], candleday[1], candleday[2], candleday[3] ,aavol, aavol5, aavol15, aavol30, aavol1h, aavol2h, aavol4h, aavol8h, aavol16h, aavolday])
+        
         return new_state
 
     def average_diff(self, state):

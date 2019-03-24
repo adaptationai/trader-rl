@@ -58,7 +58,7 @@ class PPO2_SB():
         self.model.save(save)
     
     
-    def evaluate(self, num_env=1, num_steps=14400):
+    def evaluate(self, num_env=1, num_steps=15840):
         """
         Evaluate a RL agent
         :param model: (BaseRLModel object) the RL Agent
@@ -69,9 +69,10 @@ class PPO2_SB():
         num_e = 1
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_env)])
         #self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
-        self.model = PPO2.load("data/ppo2_so-6-2", self.env, policy=CustomPolicy, tensorboard_log="./ppocnn/" )
+        self.model = PPO2.load("data/ppo2_so-8-2", self.env, policy=CustomPolicy, tensorboard_log="./ppocnn/" )
         self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
         episode_rewards = [[0.0] for _ in range(self.env.num_envs)]
+        #self.total_pips = []
         obs = self.env.reset()
         for i in range(num_steps):
             # _states are only useful when using LSTM policies
@@ -79,6 +80,7 @@ class PPO2_SB():
             # # here, action, rewards and dones are arrays
             # # because we are using vectorized env
             obs, rewards, dones, info = self.env.step(actions)
+            #self.total_pips.append(self.env.player.placement)
       
       # Stats
             for i in range(self.env.num_envs):

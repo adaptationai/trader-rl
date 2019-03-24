@@ -8,22 +8,29 @@ class Template():
     def __init__(self, name='trader', seed=0):
         self.seed = seed
         print('SEED: {}'.format(self.seed))
-        self.env = MarketSim()
+        self.start = 0
+        self.env = MarketSim(self.start)
+        self.player = self.env.player
+        self.pips = self.env.pips
+        
 
 
     def reset(self):
         """Reset the environment."""
         #info = self.env.reset(train_mode=True)[self.brain_name]
-        self.env = MarketSim()
+        self.env = MarketSim(self.start)
         state = self.env.reset()
         return state
 
     def step(self, action):
         """Take a step in the environment."""
-        state, reward, done = self.env.step(action)
+        #self.placement = self.env.placement
+        state, reward, done, self.pips = self.env.step(action)
         #print(done)
+        if done:
+            self.start += 1
 
-        return state, reward, done
+        return state, reward, done, self.pips
 
     def render(self):
         """

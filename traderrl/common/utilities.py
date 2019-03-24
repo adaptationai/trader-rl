@@ -31,7 +31,8 @@ class DataGrabber():
         self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
         self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         self.granularity= ['M1', 'M5', 'M15', 'M30', 'H1', 'H4']
-        self.full_year = np.load('data/test.npy')
+        self.full_year = np.load('data/1evalnewaudusd104320m1.npy')
+        self.day_feb_2 = ['28']
         
 
     def get_candles(self, _from,  count, granularity, instrument):
@@ -105,14 +106,17 @@ class DataGrabber():
         #self.years = ['2018']
         #self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11']
         self.hist = 4320
+        #self.hist = 5760
         self.t_frame = "M1"
-        self.month = ['01']
+        self.month = ['01','02']
+        self.year = ['2019']
+        
         self.instrument = ['EUR_USD']
         for i in self.instrument:
             for y in self.years:
                 for m in self.month:
                     if m == "02":
-                        day = self.day_feb
+                        day = self.day_feb_2
                     else:
                         day = self.day
                     for d in day:
@@ -122,7 +126,8 @@ class DataGrabber():
                         data = self.toarray(data)
             
                         full_data.append(data)
-        np.save('data/'+ self.instrument + str(self.hist) + self.t_frame + '.npy', full_data)
+        #full_data = self.flatten_simple(full_data)
+        np.save('data/'+ self.instrument[0] + str(self.hist) + self.t_frame + '.npy', full_data)
 
         return full_data
 
@@ -150,6 +155,15 @@ class DataGrabber():
         m = np.concatenate((m), axis=None)
         #c = np.concatenate((c), axis=None)
         flattened = np.concatenate((m, u), axis=None)
+
+        #k = self.data_grabber.flatten(market_details, player_details)
+        return flattened
+
+    def flatten_simple(self, u):
+        u = np.concatenate((u), axis=None)
+        #m = np.concatenate((m), axis=None)
+        #c = np.concatenate((c), axis=None)
+        flattened = np.concatenate((u), axis=None)
 
         #k = self.data_grabber.flatten(market_details, player_details)
         return flattened
@@ -213,8 +227,9 @@ class DataGrabber():
         return new_state
 
 
-    def load_state(self):
-        day = random.choice(self.full_year)
+    def load_state(self, arg):
+        #day = random.choice(self.full_year)
+        day = self.full_year[arg]
         return day
     
     def time_to_array(self, data):
