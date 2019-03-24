@@ -46,7 +46,7 @@ class PPO2_SB():
 
     def train(self, num_e=1, n_timesteps=1000000, save='default'):
         env_id = "default"
-        num_e = 1  # Number of processes to use
+        num_e = 32  # Number of processes to use
         # Create the vectorized environment
         #env = DummyVecEnv([lambda: env])
 
