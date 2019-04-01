@@ -1,3 +1,6 @@
+from numpy import np
+
+
 class Indicators():
     def __init__(self):
         self.ramona = 'Love'
@@ -13,14 +16,24 @@ class Indicators():
         return diff
 
     
+    def average_vol(self, state):
+    
+        new_state = []
+        for i in range(len(state)):
+            new_state.append(state[i][4])
+        new_state = np.mean(new_state)
+        return new_state
+
     def stocastic_oscillator(self, candle):
         c = candle[0]
         h = candle[1]
         l = candle[2]
         o = candle[3]
-        p = (c - l) / (h - l)
+        k = c - l
+        m = h - l
+        p =  k / m
         return p
-
+    
     def stocastic_oscillator_fixed(self, candles):
         #This is a basic version. Will implement better version later
         #Actually it is shit hehe
@@ -43,3 +56,29 @@ class Indicators():
         l = np.min(low)
         p = (c - l) / (h - l) * 100
         return p
+
+    def average_diff(self, state):
+    
+        new_state = []
+        for i in range(len(state)):
+            new_state.append(state[i][0])
+        new_state = np.mean(new_state)
+        return new_state
+
+
+    def median_diff(self, state):
+        new_state = []
+        for i in range(len(state)):
+            new_state.append(state[i][0])
+        new_state = np.median(new_state)
+        return new_state
+    
+    def atr(self, state):
+        stateatr = []
+        for i in range(len(state)):
+            stateatr.append(state[i][1])
+            stateatr.append(state[i][2])
+        highatr = max(stateatr)
+        lowatr = min(stateatr)
+        atr = highatr - lowatr
+        return atr  
