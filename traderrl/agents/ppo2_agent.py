@@ -49,7 +49,7 @@ class PPO2_SB():
         num_e = 1  # Number of processes to use
         # Create the vectorized environment
         #env = DummyVecEnv([lambda: env])
-
+        #Ramona
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_e)])
         self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
         self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
