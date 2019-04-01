@@ -35,6 +35,7 @@ class MarketSim():
         self.pips = self.player.pips
         self.total_pips = []
         self.start = start
+        self.day = True
     
     def make_episode(self):
         if self.load == True:
@@ -46,6 +47,10 @@ class MarketSim():
     def make_current_state(self, count):
         if self.live == True:
             self.state = self.market_live.candles_live()
+        if self.day:
+            start = (0+self.starter+count)
+            end = (14+self.starter+count)
+            self.state = self.state_full[start:end]
         else:
             start = (0+self.starter+count)
             end = (1440+self.starter+count)
@@ -61,7 +66,7 @@ class MarketSim():
         self.diff = self.state_current[0][1]
 
     def step(self, action):
-        self.count += 5
+        self.count += 1
         self.render()
         #self.player.render()
         #self.player.result()
@@ -73,7 +78,7 @@ class MarketSim():
         self.player.action(self.price, action)
         if self.live:
             self.market_live.live_step_delay()
-        if self.count == 1440:
+        if self.count == 30:
             self.player.close_position(self.price)
         self.make_current_state(self.count)
         self.get_price()
@@ -96,7 +101,7 @@ class MarketSim():
 
 
     def reset(self):
-        self.starter = 720
+        self.starter = 30
         #self.starter = np.random.random_integers(0,1440)
         self.count = 0
         self.make_episode()
@@ -326,10 +331,10 @@ class MarketSim():
         aavol2h = self.average_vol(state2h)
         aavol4h = self.average_vol(state4h)
         aavol8h = self.average_vol(state8h)
-        aavol16h = self.average_vol(state16h)
-        aavolday = self.average_vol(stateday)
-        candle1 = self.candle_maker(state[-1:])
-        candle5 = self.candle_maker(state[-5:])
+        aavol16h = selfnew_state = [].average_vol(state16h)
+        aavolday = selfnew_state = [].average_vol(stateday)
+        #candle1 = selfnew_state = [].candle_maker(state[-1:])
+        #candle5 = self.new_state = []candle_maker(state[-5:])
         
         candle15 = self.candle_maker(state[-15:])
         candle30 = self.candle_maker(state[-30:])
@@ -359,8 +364,12 @@ class MarketSim():
         #new_state.append([cl, hi, lo, op, v, day, hour, minute, cl2, hi2, lo2, op2, v2, day2, hour2, minute2, cl3, hi3, lo3, op3, v3, day3, hour3, minute3, cl4, hi4, lo4, op4, v4, day4, hour4, minute4, cl5, hi5, lo5, op5, v5, day5, hour5, minute5, cl6, hi6, lo6, op6, v6, day6, hour6, minute6, cl7, hi7, lo7, op7, v7, day7, hour7, minute7, cl8, hi8, lo8, op8, v8, day8, hour8, minute8, cl9, hi9, lo9, op9, v9, day9, hour9, minute9, cl10, hi10, lo10, op10, v10, day10, hour10, minute10, clnow, hinow, lonow, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr14, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av30, av1h, av2h, av4h, av8h, av16h, avday, md30, md1h, md2h, md4h, md8h, md16h, mdday])
         #new_state.append([cl, hi, lo, op, v, day, hour, minute, clnow, hinow, lonow, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr15, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av30, av1h, av2h, av4h, av8h, av16h, avday, md30, md1h, md2h, md4h, md8h, md16h, mdday])
         new_state.append([cl, hi, lo, op, v, day, hour, minute, clnow, hinow, lonow, cl5, cl15, cl30, cl1h, cl2h, cl4h, cl8h, cl16h, clday, atr, atr5, atr15, atr30, atr1h, atr2h, atr4h, atr8h, atr16h, atrday, av5, av15, av30, av1h, av2h, av4h, av8h, av16h, avday, md5, md15, md30, md1h, md2h, md4h, md8h, md16h, mdday, aavol, aavol5, aavol15, aavol30, aavol1h, aavol2h, aavol4h, aavol8h, aavol16h, aavolday, so1h, so2h, so4h, so8h, so16h, soday])
-        #new_state.append([cl, hi, lo, op, v, day, hour, minute, candle5[0], candle5[1], candle5[2], candle5[3], candle15[0], candle15[1], candle15[2], candle15[3], candle30[0], candle30[1], candle30[2], candle30[3], candle1h[0], candle1h[1], candle1h[2], candle1h[3], candle2h[0], candle2h[1], candle2h[2], candle2h[3], candle4h[0], candle4h[1], candle4h[2], candle4h[3], candle8h[0], candle8h[1], candle8h[2], candle8h[3], candle16h[0], candle16h[1], candle16h[2], candle16h[3], candleday[0], candleday[1], candleday[2], candleday[3] ,aavol, aavol5, aavol15, aavol30, aavol1h, aavol2h, aavol4h, aavol8h, aavol16h, aavolday])
-        
+
+        return new_state
+    def state_over_time_day(self, state):
+        new_state = []
+        so = self.stocastic_oscillator_fixed(state)
+        new_state.append([so, state[-1][0],state[-1][1], state[-1][2], state[-1][3], state[-1][4], state[-1][5], state[-1][6], state[-2][0],state[-2][1], state[-2][2], state[-2][3], state[-2][4], state[-2][5], state[-2][6], state[-3][0],state[-3][1], state[-3][2], state[-3][3], state[-3][4], state[-3][5], state[-3][6], state[-4][0],state[-4][1], state[-4][2], state[-4][3], state[-4][4], state[-4][5], state[-4][6], state[-5][0],state[-5][1], state[-5][2], state[-5][3], state[-5][4], state[-5][5], state[-5][6], state[-6][0],state[-6][1], state[-6][2], state[-6][3], state[-6][4], state[-6][5], state[-6][6], state[-7][0],state[-7][1], state[-7][2], state[-7][3], state[-7][4], state[-7][5], state[-7][6], state[-8][0],state[-8][1], state[-8][2], state[-8][3], state[-8][4], state[-8][5], state[-8][6], state[-9][0],state[-9][1], state[-9][2], state[-9][3], state[-9][4], state[-9][5], state[-9][6] ,state[-10][0],state[-10][1], state[-10][2], state[-10][3], state[-10][4], state[-10][5], state[-10][6] ,state[-11][0],state[-11][1], state[-11][2], state[-11][3], state[-11][4], state[-11][5], state[-11][6], state[-12][0], state[-12][1], state[-12][2], state[-12][3], state[-12][4], state[-12][5], state[-12][6], state[-13][0], state[-13][1], state[-13][2], state[-13][3], state[-13][4], state[-13][5], state[-13][6], state[-14][0], state[-14][1], state[-14][2], state[-14][3], state[-14][4], state[-14][5], state[-14][6]])
         return new_state
 
     def average_diff(self, state):
@@ -405,6 +414,29 @@ class MarketSim():
         k = c - l
         m = h - l
         p =  k / m
+        return p
+    
+    def stocastic_oscillator_fixed(self, candles):
+        #This is a basic version. Will implement better version later
+        #Actually it is shit hehe
+        #%K = (Current Close - Lowest Low)/(Highest High - Lowest Low) * 100
+        #%D = 3-day SMA of %K
+        #Lowest Low = lowest low for the look-back period
+        #Highest High = highest high for the look-back period
+        candles = candles[-14:]
+        close = []
+        high = []
+        low = []
+        op = []
+        for i in range(len(candles)):
+            close.append(candles[i][0])
+            high.append(candles[i][1])
+            low.append(candles[i][2])
+            op.append(candles[i][3])
+        c = close[-1]
+        h = np.max(high) 
+        l = np.min(low)
+        p = (c - l) / (h - l) * 100
         return p
 
     def candle_maker(self, state):

@@ -21,3 +21,25 @@ class Indicators():
         p = (c - l) / (h - l)
         return p
 
+    def stocastic_oscillator_fixed(self, candles):
+        #This is a basic version. Will implement better version later
+        #Actually it is shit hehe
+        #%K = (Current Close - Lowest Low)/(Highest High - Lowest Low) * 100
+        #%D = 3-day SMA of %K
+        #Lowest Low = lowest low for the look-back period
+        #Highest High = highest high for the look-back period
+        candles = candles[-14:]
+        close = []
+        high = []
+        low = []
+        op = []
+        for i in range(len(candles)):
+            close.append(candles[i][0])
+            high.append(candles[i][1])
+            low.append(candles[i][2])
+            op.append(candles[i][3])
+        c = close[-1]
+        h = np.max(high) 
+        l = np.min(low)
+        p = (c - l) / (h - l) * 100
+        return p
