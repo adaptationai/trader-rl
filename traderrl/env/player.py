@@ -11,7 +11,8 @@ from .market_live import MarketLive
 #import torch
 #import numpy
 class Player():
-    def __init__(self):
+    def __init__(self, config):
+        self.config = config
         self.balance = 0
         self.net_balance = 0
         self.placement = 0
@@ -23,8 +24,9 @@ class Player():
         self.pips = 0
         self.pips_net = 0
         self.reward = 0
-        self.spread = 0.0002
-        self.half_spread = 0.0001
+        self.spread = self.config.spread
+        self.pair = self.config.pair
+        self.half_spread = self.config.half_spread
         self.diff = 0
         self.live_market = MarketLive()
         self.live = False

@@ -18,10 +18,10 @@ from ..common import Auth
 from ..common import Indicators
 #from ..common import DataGrabber
 class MarketSim():
-    def __init__(self, start, config):
+    def __init__(self, start, config=PairDefault()):
         self.config = config
         self.love = 14
-        self.player = Player()
+        self.player = Player(self.config)
         self.data_grabber = DataGrabber()
         self.market_live = MarketLive()
         self.indicators = Indicators()
@@ -126,7 +126,7 @@ class MarketSim():
         user = self.player.details(self.price)
         market = self.state_over_time(self.state)
         count = np.array([self.count])
-        state = self.data_grabber.flatten(market, user)
+        state = self.data_grabber.flatten(market, user, count)
         return state
 
     def reward2(self):

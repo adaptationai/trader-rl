@@ -1,4 +1,5 @@
-from numpy import np
+import numpy as np
+
 
 
 def candle_maker(self, state):

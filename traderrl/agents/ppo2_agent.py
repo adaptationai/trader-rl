@@ -55,7 +55,10 @@ class PPO2_SB():
         self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
         #self.model = PPO2.load("trader10year15m-32bk-reward-lr5-100m-2x256-20y-shaped-4", env, policy=CustomPolicy, tensorboard_log="./ppo2full10/" )
         n_timesteps = n_timesteps * save_fraction
+        n_timesteps = int(n_timesteps)
         training_loop = 1 / save_fraction
+        training_loop = int(training_loop)
+        
         for i in range(training_loop):
             self.model.learn(n_timesteps)
             self.model.save(save+i)
