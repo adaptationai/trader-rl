@@ -9,10 +9,10 @@ from traderrl import MarketLive
 #test = Train51()
 
 def main():
-    #test = DataGrabber()
-    #test.process_to_array_2()
-    test = PPO2_SB()
-    test.train()
+    test = DataGrabber()
+    test.process_to_array_2()
+    #test = PPO2_SB()
+    #test.train()
     #test.evaluate()
     #test = MarketLive()
     #test.position_close_long()

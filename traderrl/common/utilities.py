@@ -22,7 +22,7 @@ class DataGrabber():
         self.love = 14
         self.auth = Auth()
         self.client = oandapyV20.API(access_token=self.auth.access_token)
-        self.years = ['2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008']
+        self.years = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008']
         self.instrument = ['EUR_USD', 'AUD_USD', 'GBP_USD', 'NZD_USD', 'USD_CHF', 'USD_CAD']
         self.time = ['00:00:00']
         self.hour = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
@@ -105,13 +105,13 @@ class DataGrabber():
         full_data = []
         #self.years = ['2018']
         #self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11']
-        self.hist = 4320
+        self.hist = 45
         #self.hist = 5760
-        self.t_frame = "M1"
-        self.month = ['01','02']
-        self.year = ['2019']
+        self.t_frame = "D"
+        #self.month = ['01','02']
+        #self.year = ['2018']
         
-        self.instrument = ['EUR_USD']
+        self.instrument = ['AUD_USD']
         for i in self.instrument:
             for y in self.years:
                 for m in self.month:
@@ -120,7 +120,7 @@ class DataGrabber():
                     else:
                         day = self.day
                     for d in day:
-                        data = self.get_candles(y+'-'+m+'-'+d+'T00:00:00Z', self.hist, self.t_frame, i)
+                        data = self.get_candles(y+'-'+m+'-'+d+'T21:00:00Z', self.hist, self.t_frame, i)
                         data = self.data_converted(data)
                         data = self.time_to_array(data)
                         data = self.toarray(data)
