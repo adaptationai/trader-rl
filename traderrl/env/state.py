@@ -38,12 +38,13 @@ class MarketSim():
         self.steps = self.config.steps
         self.pips = self.player.pips
         self.total_pips = []
+        self.starts = start
         
         self.day = True
     
     def make_episode(self):
         if self.load == True:
-            self.state_full = self.data_grabber.load_state(self.start)
+            self.state_full = self.data_grabber.load_state(self.starts)
         else:
             self.state_full = self.data_grabber.process_to_array()
 
@@ -116,7 +117,9 @@ class MarketSim():
         #print(f'diff:{self.diff}')
         #print(f'Count:{self.count}')
         #print(f'Reward:{self.reward}')
-        pass
+        self.player.render()
+        self.player.result()
+        return
 
 
     def state_maker(self):
@@ -133,8 +136,6 @@ class MarketSim():
     def done(self, count):
         if count == self.steps:
             self.render()
-            self.player.render()
-            self.player.result()
             return True
         else:
             return False 
@@ -175,7 +176,7 @@ class MarketSim():
     
 
         return new_state
-    def state_over_time_day(self, state):
+    def state_over_time(self, state):
         new_state = self.config.state_over_time(state)
         #new_state = []
         #so = self.indicators.stocastic_oscillator_fixed(state)
@@ -184,20 +185,7 @@ class MarketSim():
 
     
 
-    def candle_maker(self, state):
-        new_state = []
-        highs = []
-        lows = []
-        new_state.append(state[-1][0])
-        for i in range(len(state)):
-            highs.append(state[i][1])
-        for i in range(len(state)):
-            lows.append(state[i][2])
-        new_state.append(max(highs))
-        new_state.append(min(lows))
-        new_state.append(state[0][3])
-
-        return new_state
+    
 
 
 #test = MarketSim()

@@ -1,3 +1,23 @@
+from numpy import np
+
+
+def candle_maker(self, state):
+        new_state = []
+        highs = []
+        lows = []
+        new_state.append(state[-1][0])
+        for i in range(len(state)):
+            highs.append(state[i][1])
+        for i in range(len(state)):
+            lows.append(state[i][2])
+        new_state.append(max(highs))
+        new_state.append(min(lows))
+        new_state.append(state[0][3])
+
+        return new_state
+
+
+
 def state_over_time_m1(self, state):
         new_state = []
         cl = state[-1][0]

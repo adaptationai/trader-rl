@@ -31,7 +31,7 @@ class DataGrabber():
         self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
         self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         self.granularity= ['M1', 'M5', 'M15', 'M30', 'H1', 'H4']
-        self.full_year = np.load('data/1evalnewaudusd104320m1.npy')
+        self.full_year = np.load('data/AUD_USD45DEVAL.npy')
         self.day_feb_2 = ['28']
         
 
@@ -150,11 +150,11 @@ class DataGrabber():
             x.append(con)
         return x
 
-    def flatten(self, u, m):
+    def flatten(self, u, m, c):
         u = np.concatenate((u), axis=None)
         m = np.concatenate((m), axis=None)
-        #c = np.concatenate((c), axis=None)
-        flattened = np.concatenate((m, u), axis=None)
+        c = np.concatenate((c), axis=None)
+        flattened = np.concatenate((m, u, c), axis=None)
 
         #k = self.data_grabber.flatten(market_details, player_details)
         return flattened
