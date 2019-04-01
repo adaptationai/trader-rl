@@ -61,7 +61,7 @@ class MarketSim():
         self.diff = self.state_current[0][1]
 
     def step(self, action):
-        self.count += 5
+        self.count += 1
         self.render()
         #self.player.render()
         #self.player.result()
@@ -73,7 +73,7 @@ class MarketSim():
         self.player.action(self.price, action)
         if self.live:
             self.market_live.live_step_delay()
-        if self.count == 1440:
+        if self.count == 30:
             self.player.close_position(self.price)
         self.make_current_state(self.count)
         self.get_price()
@@ -96,7 +96,7 @@ class MarketSim():
 
 
     def reset(self):
-        self.starter = 720
+        self.starter = 0
         #self.starter = np.random.random_integers(0,1440)
         self.count = 0
         self.make_episode()
@@ -132,7 +132,7 @@ class MarketSim():
         return self.player.reward
     
     def done(self, count):
-        if count == 1440:
+        if count == 30:
             self.render()
             self.player.render()
             self.player.result()
