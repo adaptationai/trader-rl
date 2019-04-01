@@ -44,9 +44,9 @@ class PPO2_SB():
         return _init
     
 
-    def train(self, num_e=1, n_timesteps=1000000, save_fraction=0.1, save='default'):
+    def train(self, num_e=1, n_timesteps=10000000, save_fraction=0.1, save='default'):
         env_id = "default"
-        num_e = 1  # Number of processes to use
+        num_e = 32  # Number of processes to use
         # Create the vectorized environment
         #env = DummyVecEnv([lambda: env])
         #Ramona

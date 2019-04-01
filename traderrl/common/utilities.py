@@ -228,8 +228,8 @@ class DataGrabber():
 
 
     def load_state(self, arg):
-        #day = random.choice(self.full_year)
-        day = self.full_year[arg]
+        day = random.choice(self.full_year)
+        #day = self.full_year[arg]
         return day
     
     def time_to_array(self, data):
