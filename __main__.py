@@ -8,8 +8,8 @@ from traderrl import MarketLive
 
 
 def main():
-    test = DataGrabber()
-    test.process_to_array_2()
+    #test = DataGrabber()
+    #test.process_to_array_2()
     #test = PPO2_SB()
     #test.train()
     #test.evaluate()
