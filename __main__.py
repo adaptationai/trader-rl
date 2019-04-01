@@ -5,8 +5,7 @@ import numpy as np
 from traderrl import PPO2_SB
 from traderrl import DataGrabber
 from traderrl import MarketLive
-#test = Baseline_Details()
-#test = Train51()
+
 
 def main():
     test = DataGrabber()

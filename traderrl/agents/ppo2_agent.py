@@ -44,7 +44,7 @@ class PPO2_SB():
         return _init
     
 
-    def train(self, num_e=1, n_timesteps=1000000, save='default'):
+    def train(self, num_e=1, n_timesteps=1000000, save_fraction=0.1, save='default'):
         env_id = "default"
         num_e = 1  # Number of processes to use
         # Create the vectorized environment
@@ -54,8 +54,11 @@ class PPO2_SB():
         self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
         self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
         #self.model = PPO2.load("trader10year15m-32bk-reward-lr5-100m-2x256-20y-shaped-4", env, policy=CustomPolicy, tensorboard_log="./ppo2full10/" )
-        self.model.learn(n_timesteps)
-        self.model.save(save)
+        n_timesteps = n_timesteps * save_fraction
+        training_loop = 1 / save_fraction
+        for i in range(training_loop):
+            self.model.learn(n_timesteps)
+            self.model.save(save+i)
     
     
     def evaluate(self, num_env=1, num_steps=15840):

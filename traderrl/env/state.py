@@ -101,7 +101,11 @@ class MarketSim():
 
 
     def reset(self):
+<<<<<<< HEAD
         self.starter = 30
+=======
+        self.starter = 0
+>>>>>>> 18f111c565562600c8fe749b160f77aa0ecc18a9
         #self.starter = np.random.random_integers(0,1440)
         self.count = 0
         self.make_episode()
@@ -137,7 +141,7 @@ class MarketSim():
         return self.player.reward
     
     def done(self, count):
-        if count == 1440:
+        if count == 30:
             self.render()
             self.player.render()
             self.player.result()
