@@ -123,13 +123,9 @@ class MarketSim():
 
     def state_maker(self):
         user = self.player.details(self.price)
-        #market = self.state
-        #market = self.difference2(self.state)
         market = self.state_over_time(self.state)
-        #market = np.array([self.price])
         count = np.array([self.count])
         state = self.data_grabber.flatten(market, user)
-        #state = self.data_grabber.scaled(state)
         return state
 
     def reward2(self):
