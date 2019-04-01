@@ -101,7 +101,7 @@ class MarketSim():
 
 
     def reset(self):
-        self.starter = 0
+        self.starter =0
         #self.starter = np.random.random_integers(0,1440)
         self.count = 0
         self.make_episode()
