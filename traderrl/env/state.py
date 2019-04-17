@@ -141,14 +141,20 @@ class MarketSim():
         state = self.data_grabber.flatten(market, user, count)
         return state
 
-    def reward2(self):
-
-        return self.player.reward
+    def rewards(self):
+        self.delay_modifier = (self.count / self.steps)
+  
+        reward = self.player.balance * self.delay_modifier
+        #done = self.net_worth <= 0
+        return reward
     
     def done(self, count):
         if count == self.steps:
             self.render()
             return True
+        elif self.player.net_balance <= 0:
+            return True
+
         else:
             return False 
 
