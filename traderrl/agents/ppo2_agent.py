@@ -15,7 +15,7 @@ from stable_baselines import ACKTR, PPO2
 from stable_baselines.deepq import DQN
 #from stable_baselines.deepq.policies import FeedForwardPolicy
 from ..env import Template_Gym
-from ..common import CustomPolicy
+from ..common import CustomPolicy, CustomPolicy_2
 env = Template_Gym()
 
 
@@ -44,16 +44,16 @@ class PPO2_SB():
         return _init
     
 
-    def train(self, num_e=1, n_timesteps=10000000, save_fraction=0.1, save='default'):
+    def train(self, num_e=1, n_timesteps=10000000, save_fraction=0.1, save='saves/defaultlstm4h'):
         env_id = "default"
         num_e = 32  # Number of processes to use
         # Create the vectorized environment
         #env = DummyVecEnv([lambda: env])
         #Ramona
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_e)])
-        self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
-        self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
-        #self.model = PPO2.load("trader10year15m-32bk-reward-lr5-100m-2x256-20y-shaped-4", env, policy=CustomPolicy, tensorboard_log="./ppo2full10/" )
+        self.env = VecNormalize(self.env, norm_obs=False, norm_reward=True)
+        self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-5, tensorboard_log="./test11" )
+        #self.model = PPO2.load("default9", self.env, policy=CustomPolicy, tensorboard_log="./test/" )
         n_timesteps = n_timesteps * save_fraction
         n_timesteps = int(n_timesteps)
         training_loop = 1 / save_fraction
@@ -61,10 +61,10 @@ class PPO2_SB():
         
         for i in range(training_loop):
             self.model.learn(n_timesteps)
-            self.model.save(save+i)
+            self.model.save(save+str(i))
     
     
-    def evaluate(self, num_env=1, num_steps=15840):
+    def evaluate(self, num_env=32, num_steps=4200, load="saves/defaultlstm4h", runs=10):
         """
         Evaluate a RL agent
         :param model: (BaseRLModel object) the RL Agent
@@ -75,33 +75,34 @@ class PPO2_SB():
         num_e = 1
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_env)])
         #self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
-        self.model = PPO2.load("data/ppo2_so-8-2", self.env, policy=CustomPolicy, tensorboard_log="./ppocnn/" )
-        self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
-        episode_rewards = [[0.0] for _ in range(self.env.num_envs)]
-        #self.total_pips = []
-        obs = self.env.reset()
-        for i in range(num_steps):
-            # _states are only useful when using LSTM policies
-            actions, _states = self.model.predict(obs)
-            # # here, action, rewards and dones are arrays
-            # # because we are using vectorized env
-            obs, rewards, dones, info = self.env.step(actions)
-            #self.total_pips.append(self.env.player.placement)
+        self.env = VecNormalize(self.env, norm_obs=False, norm_reward=True)
+        for i in range(runs):
+            self.model = PPO2.load(load+str(i), self.env, policy=CustomPolicy_2, tensorboard_log="./default/" )
+            episode_rewards = [[0.0] for _ in range(self.env.num_envs)]
+            #self.total_pips = []
+            obs = self.env.reset()
+            for i in range(num_steps):
+                # _states are only useful when using LSTM policies
+                actions, _states = self.model.predict(obs)
+                # # here, action, rewards and dones are arrays
+                 # # because we are using vectorized env
+                obs, rewards, dones, info = self.env.step(actions)
+                #self.total_pips.append(self.env.player.placement)
       
-      # Stats
+        # Stats
+                for i in range(self.env.num_envs):
+                    episode_rewards[i][-1] += rewards[i]
+                    if dones[i]:
+                        episode_rewards[i].append(0.0)
+
+            mean_rewards =  [0.0 for _ in range(self.env.num_envs)]
+            n_episodes = 0
             for i in range(self.env.num_envs):
-                episode_rewards[i][-1] += rewards[i]
-                if dones[i]:
-                    episode_rewards[i].append(0.0)
+                mean_rewards[i] = np.mean(episode_rewards[i])     
+                n_episodes += len(episode_rewards[i])   
 
-        mean_rewards =  [0.0 for _ in range(self.env.num_envs)]
-        n_episodes = 0
-        for i in range(self.env.num_envs):
-            mean_rewards[i] = np.mean(episode_rewards[i])     
-            n_episodes += len(episode_rewards[i])   
-
-    # Compute mean reward
-        mean_reward = np.mean(mean_rewards)
-        print("Mean reward:", mean_reward, "Num episodes:", n_episodes)
+        # Compute mean reward
+            mean_reward = np.mean(mean_rewards)
+            print("Mean reward:", mean_reward, "Num episodes:", n_episodes)
 
         return mean_reward

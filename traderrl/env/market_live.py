@@ -9,9 +9,9 @@ import oandapyV20.endpoints.instruments as instruments
 import oandapyV20.endpoints.positions as position
 from oandapyV20.contrib.requests import MarketOrderRequest, LimitOrderRequest, MITOrderRequest, PositionCloseRequest, StopLossDetails, TakeProfitDetails, TrailingStopLossDetails
 import time
-from .utilities import DataGrabber
+from ..common.utilities import DataGrabber
 
-from .auth import Auth
+from ..common.auth import Auth
 
 
 class MarketLive():

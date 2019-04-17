@@ -25,23 +25,36 @@ class Template_Gym(gym.Env):
         self.done = False
         self.state = None
         self.action_dim = 3
-        self.state_dim = 109
+        self.state_dim = 18
         self.num_envs = 1
         self.num_envs_per_sub_batch = 1
         self.total_pips = []
         self.player = self.env.player
         self.pips = self.env.pips
         self.starter = 0
+        self.discrete = True
 
-        # forward or backward in each dimension
-        self.action_space = spaces.Discrete(3)
+        #self.df = df
+        #self.reward_range = (0, MAX_ACCOUNT_BALANCE) 
+        if self.discrete:
+            # forward or backward in each dimension
+            self.action_space = spaces.Discrete(3)
 
-        # observation is the x, y coordinate of the grid
-        #low = np.zeros(0, dtype=int)
-        #high =  np.array(1, dtype=int) - np.ones(len(self.maze_size), dtype=int)
-        self.observation_space = spaces.Box(low=-100000, high=100000, shape=(109,))
-        #print("obs")
-        #print (self.observation_space)
+            # observation is the x, y coordinate of the grid
+            #low = np.zeros(0, dtype=int)
+            #high =  np.array(1, dtype=int) - np.ones(len(self.maze_size), dtype=int)
+            self.observation_space = spaces.Box(low=-1, high=1, shape=(18,))
+        else:
+            # Actions of the format Buy x%, Sell x%, Hold, etc.
+            self.action_space = spaces.Box(low=np.array([0, 0]), high=np.array([3, 1]), dtype=np.float16)
+            #or
+            #self.action_space = spaces.Box(low=np.array([0, 0, 0, 0]), high=np.array([3, 1, 1, 1]), dtype=np.float16)
+
+
+            # Prices contains the OHCL values for the last five prices
+            self.observation_space = spaces.Box(low=0, high=1, shape=(6, 6), dtype=np.float16)
+
+        
 
         # initial condition
         #self.state = self.env.generate_number()
@@ -76,10 +89,11 @@ class Template_Gym(gym.Env):
         #self.next_state = self.next_state.tolist()
         self.total_pips.append(self.pips)
         if self.done:
-            print("total pips")
-            print(np.sum(self.total_pips))
-            print(len(self.total_pips))
+            #print("total pips")
+            #print(np.sum(self.total_pips))
+            #print(len(self.total_pips))
             #self.starter += 1
+            pass
         return self.next_state, self.reward, self.done, self.info
 
     def reset(self):

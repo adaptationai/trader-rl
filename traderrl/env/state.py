@@ -39,6 +39,7 @@ class MarketSim():
         self.pips = self.player.pips
         self.total_pips = []
         self.starts = start
+        self.pm_price = 0 
         
         self.day = True
     
@@ -61,6 +62,10 @@ class MarketSim():
     def get_price(self):
         self.state_current = self.state[-1:]
         self.price = self.state_current[0][0]
+
+    def get_pm_price(self):
+        self.state_current = self.state[-2:]
+        self.pm_price = self.state_current[0]
     
     def get_diff(self):
         self.state_current = self.state[-1:]
@@ -68,27 +73,33 @@ class MarketSim():
 
     def step(self, action):
         self.count += 1
-        self.render()
+        #self.render()
         self.get_price()
+        self.get_pm_price()
         self.get_diff()
-        d1 = self.player.net_balance
+        d1 = self.player.balance
         pl1 = d1+10000
         self.pips = self.player.pips
-        self.player.action(self.price, action)
+        self.player.action(self.price, action, self.pm_price)
         if self.live:
             self.market_live.live_step_delay()
         if self.count == self.steps:
-            self.player.close_position(self.price)
+            self.player.close_position(self.price, self.pm_price)
         self.make_current_state(self.count)
         self.get_price()
+        self.get_pm_price()
         self.get_diff()
-        self.player.update(self.price)
-        d2 = self.player.net_balance
+        #self.player.sl_check(self.state[-1])
+        #self.player.tp_check(self.state[-1])
+        self.player.update(self.price, self.pm_price)
+        d2 = self.player.balance
         pl2 = d2+10000
         dy = d2 - d1
         rl = float(pl2) / float(pl1)
         rr= math.log(rl)
         self.reward = rr
+        if self.reward < 0:
+            self.reward = self.reward
         state = self.state_maker()
         done = self.done(self.count)
         if done:
@@ -106,8 +117,9 @@ class MarketSim():
         self.make_episode()
         self.state = self.make_current_state(self.count)
         self.get_price()
+        self.get_pm_price()
         self.get_diff()
-        self.player.update(self.price)
+        self.player.update(self.price, self.pm_price)
         state = self.state_maker()
         return state
 
@@ -117,8 +129,8 @@ class MarketSim():
         #print(f'diff:{self.diff}')
         #print(f'Count:{self.count}')
         #print(f'Reward:{self.reward}')
-        self.player.render()
-        self.player.result()
+        #self.player.render()
+        #self.player.result()
         return
 
 

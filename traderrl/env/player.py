@@ -30,14 +30,15 @@ class Player():
         self.diff = 0
         self.live_market = MarketLive()
         self.live = False
-        self.augmented = False
+        self.augmented = True
         #self.actions = [self.open_position_long(self.m_price), self.open_position_short(self.m_price), self.close_position(self.m_price), self.hold_position(self.m_price)]
         
 
 
-    def update(self, m_price):
+    def update(self, m_price, pm_price):
         #bm_price = self.m_price
         self.m_price = m_price
+        self.p_price = pm_price
         #am_price = self.m_price 
         #difference = am_price - bm_price
         #self.diff = difference * 10000
@@ -47,19 +48,98 @@ class Player():
         self.pips = self.balance * 10000
         self.pips_net = self.net_balance * 10000
         #self.reward = 0
-        
 
-    def open_position_long(self, m_price):
+    def get_sl(self, pm_price):
+        p_candle = pm_price
+        diff = abs(p_candle[1]- p_candle[2])
+        return diff
+
+    def get_tp(self, pm_price):
+        p_candle = pm_price
+        diff = abs(p_candle[1]- p_candle[2])
+        return diff
+
+    def sl_check(self, state):
+        if len(self.positions) == 1:
+            if self.positions[0][1] == 1:
+                if state[2] <= self.positions[0][2]:
+                    close = self.positions[0][2] - self.half_spread
+                    profit = close - self.positions[0][0]
+                    self.long_positions.append([self.positions[0][0], close, profit]) 
+                    self.reward = profit * 10000
+                    self.balance = self.balance + profit
+                    self.positions = []
+                    self.placement = 0
+                    return
+            elif self.positions[0][1] == -1:
+                if state[1] >= self.positions[0][2]:
+                    close = self.positions[0][2] + self.half_spread
+                    profit = self.positions[0][0] - close
+                    self.short_positions.append([self.positions[0][0], close, profit])
+                    self.reward = profit * 10000
+                    self.balance = self.balance + profit
+                    self.positions = []
+                    self.placement = 0
+                    return
+
+            
+            
+            #self.reward = profit * 10000
+            #elf.update()
+        else:
+            self.reward = 0
+            return
+
+    def tp_check(self, state):
+        if len(self.positions) == 1:
+            if self.positions[0][1] == 1:
+                if state[1] >= self.positions[0][3]:
+                    close = self.positions[0][3] - self.half_spread
+                    profit = close - self.positions[0][0]
+                    self.long_positions.append([self.positions[0][0], close, profit]) 
+                    self.reward = profit * 10000
+                    self.balance = self.balance + profit
+                    self.positions = []
+                    self.placement = 0
+                    return
+            elif self.positions[0][1] == -1:
+                if state[2] <= self.positions[0][3]:
+                    close = self.positions[0][3] + self.half_spread
+                    profit = self.positions[0][0] - close
+                    self.short_positions.append([self.positions[0][0], close, profit])
+                    self.reward = profit * 10000
+                    self.balance = self.balance + profit
+                    self.positions = []
+                    self.placement = 0
+                    return
+
+            
+            
+            #self.reward = profit * 10000
+            #elf.update()
+        else:
+            self.reward = 0
+            return
+
+
+
+       
+
+    def open_position_long(self, m_price, pm_price):
         if len(self.positions) == 0:
             buy = m_price + self.half_spread
-            self.positions.append([(buy), 1])
+            diff_sl = self.get_sl(pm_price)
+            diff_tp = self.get_tp(pm_price)
+            sl = m_price - diff_sl
+            tp = m_price + diff_tp
+            self.positions.append([(buy), 1, sl, tp])
             #self.pips += -2
             if self.live:
                     self.live_market.market_order_long()
             self.reward = 0
         if self.augmented:    
             if len(self.positions) == 1:
-                self.update(m_price)
+                self.update(m_price, pm_price)
                 pos = self.positions[0]
                 p_price = pos[0]
                 if pos[1] == -1:
@@ -89,17 +169,21 @@ class Player():
             self.reward = 0
         
     
-    def open_position_short(self, m_price):
+    def open_position_short(self, m_price, pm_price):
         if len(self.positions) == 0:
             sell = m_price - self.half_spread
-            self.positions.append([(sell), -1])
+            diff_sl = self.get_sl(pm_price)
+            diff_tp = self.get_tp(pm_price)
+            sl = m_price + diff_sl
+            tp = m_price - diff_tp
+            self.positions.append([(sell), -1, sl, tp])
             #self.pips += -2
             if self.live:
                     self.live_market.market_order_short()
             self.reward = 0
         if self.augmented:    
             if len(self.positions) == 1:
-                self.update(m_price)
+                self.update(m_price, pm_price)
                 pos = self.positions[0]
                 p_price = pos[0]
                 if pos[1] == 1:
@@ -128,7 +212,7 @@ class Player():
         else:
             self.reward = 0
     
-    def open_position_long_hedge(self, m_price):
+    def open_position_long_hedge(self, m_price, pm_price):
         if len(self.long_positions) == 0:
             buy = m_price + self.half_spread
             self.long_positions.append([(buy), 1])
@@ -139,7 +223,7 @@ class Player():
         
         
     
-    def open_position_short_hedge(self, m_price):
+    def open_position_short_hedge(self, m_price, pm_price):
         if len(self.short_positions) == 0:
             sell = m_price - self.half_spread
             self.short_positions.append([(sell), -1])
@@ -149,9 +233,9 @@ class Player():
         
             
     
-    def close_position(self, m_price):
+    def close_position(self, m_price, pm_price):
         #print(len(self.positions))
-        self.update(m_price)
+        self.update(m_price, pm_price)
         if len(self.positions) == 1:
             pos = self.positions[0]
             p_price = pos[0]
@@ -180,9 +264,9 @@ class Player():
         else:
             self.reward = 0
     
-    def close_position_long(self, m_price):
+    def close_position_long(self, m_price, pm_price):
         #print(len(self.positions))
-        self.update(m_price)
+        self.update(m_price, pm_price)
         if len(self.long_positions) == 1:
             pos = self.long_positions[0]
             p_price = pos[0]
@@ -200,9 +284,9 @@ class Player():
             #self.reward = profit * 10000
             #elf.update()
         
-    def close_position_short(self, m_price):
+    def close_position_short(self, m_price, pm_price):
         #print(len(self.positions))
-        self.update(m_price)
+        self.update(m_price, pm_price)
         if len(self.short_positions) == 1:
             pos = self.short_positions[0]
             p_price = pos[0]
@@ -222,7 +306,7 @@ class Player():
             self.reward = 0
 
     
-    def hold_position(self, m_price):
+    def hold_position(self, m_price, pm_price):
         #pass
         self.reward = 0
 
@@ -262,57 +346,57 @@ class Player():
     def update_net_balance(self, m_price):
         self.net_balance = self.balance + self.placement
 
-    def action_user(self, m_price):
+    def action_user(self, m_price, pm_price):
         #print(len)
         #self.update(m_price)
         x = input('buy, sell, close, hold?:')
         x = str(x)
         if x == "buy":
-            self.open_position_long(m_price)
+            self.open_position_long(m_price, pm_price)
         elif  x == "sell":
-            self.open_position_short(m_price)
+            self.open_position_short(m_price, pm_price)
         elif x == "close":
-            self.close_position(m_price)
+            self.close_position(m_price, pm_price)
         elif x == "hold":
-            self.hold_position(m_price)
+            self.hold_position(m_price, pm_price)
         else:
-            self.hold_position(m_price)
+            self.hold_position(m_price, pm_price)
 
-    def action(self, m_price, action):
+    def action(self, m_price, action, pm_price):
         #print(len)
         #self.update(m_price)
         x = action
         x = int(x)
-        if self.placement < -0.0200 or self.placement > 0.0200:
-            self.close_position(m_price)
+        if self.placement < -0.200 or self.placement > 0.200:
+            self.close_position(m_price, pm_price)
         elif x == 0:
-            self.open_position_long(m_price)
+            self.open_position_long(m_price, pm_price)
         elif x == 1:
-            self.open_position_short(m_price)
+            self.open_position_short(m_price, pm_price)
         elif x == 2:
-            self.close_position(m_price)
+            self.close_position(m_price, pm_price)
         elif x == 3:
-            self.hold_position(m_price)
+            self.hold_position(m_price, pm_price)
         else:
-            self.hold_position(m_price)
+            self.hold_position(m_price, pm_price)
     
-    def action_hedge(self, m_price, action):
+    def action_hedge(self, m_price, action, pm_price):
         #print(len)
         #self.update(m_price)
         x = action
         x = int(x)
         if x == 0:
-            self.open_position_long_hedge(m_price)
+            self.open_position_long_hedge(m_price, pm_price)
         elif x == 1:
-            self.open_position_short_hedge(m_price)
+            self.open_position_short_hedge(m_price, pm_price)
         elif x == 2:
-            self.close_position_long(m_price)
+            self.close_position_long(m_price, pm_price)
         elif x == 3:
-            self.close_position_short(m_price)
+            self.close_position_short(m_price, pm_price)
         elif x == 4:
-            self.hold_position(m_price)
+            self.hold_position(m_price, pm_price)
         else:
-            self.hold_position(m_price)
+            self.hold_position(m_price, pm_price)
 
 
     def details(self, m_price):
