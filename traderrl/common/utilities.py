@@ -31,7 +31,7 @@ class DataGrabber():
         self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
         self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         self.granularity= ['M1', 'M5', 'M15', 'M30', 'H1', 'H4']
-        self.full_year = np.load('data/AUD_USD84H4.npy')
+        self.full_year = np.load('data/AUD_USD45DEVAL.npy')
         self.day_feb_2 = ['28']
         
 

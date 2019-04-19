@@ -98,6 +98,7 @@ class MarketSim():
         rl = float(pl2) / float(pl1)
         rr= math.log(rl)
         self.reward = rr
+        self.reward = self.rewards()
         if self.reward < 0:
             self.reward = self.reward
         state = self.state_maker()

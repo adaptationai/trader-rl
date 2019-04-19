@@ -25,7 +25,7 @@ class Template_Gym(gym.Env):
         self.done = False
         self.state = None
         self.action_dim = 3
-        self.state_dim = 18
+        self.state_dim = 32
         self.num_envs = 1
         self.num_envs_per_sub_batch = 1
         self.total_pips = []
@@ -43,7 +43,7 @@ class Template_Gym(gym.Env):
             # observation is the x, y coordinate of the grid
             #low = np.zeros(0, dtype=int)
             #high =  np.array(1, dtype=int) - np.ones(len(self.maze_size), dtype=int)
-            self.observation_space = spaces.Box(low=-1, high=1, shape=(18,))
+            self.observation_space = spaces.Box(low=-10, high=10, shape=(109,))
         else:
             # Actions of the format Buy x%, Sell x%, Hold, etc.
             self.action_space = spaces.Box(low=np.array([0, 0]), high=np.array([3, 1]), dtype=np.float16)
@@ -89,8 +89,8 @@ class Template_Gym(gym.Env):
         #self.next_state = self.next_state.tolist()
         self.total_pips.append(self.pips)
         if self.done:
-            #print("total pips")
-            #print(np.sum(self.total_pips))
+            print("total pips")
+            print(np.sum(self.total_pips))
             #print(len(self.total_pips))
             #self.starter += 1
             pass

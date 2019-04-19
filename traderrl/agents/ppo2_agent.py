@@ -44,15 +44,15 @@ class PPO2_SB():
         return _init
     
 
-    def train(self, num_e=1, n_timesteps=10000000, save_fraction=0.1, save='saves/defaultlstm4h'):
+    def train(self, num_e=1, n_timesteps=10000000, save_fraction=0.1, save='saves/defaultlstmday'):
         env_id = "default"
         num_e = 32  # Number of processes to use
         # Create the vectorized environment
         #env = DummyVecEnv([lambda: env])
         #Ramona
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_e)])
-        self.env = VecNormalize(self.env, norm_obs=False, norm_reward=True)
-        self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-5, tensorboard_log="./test11" )
+        self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
+        self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-5, tensorboard_log="./test" )
         #self.model = PPO2.load("default9", self.env, policy=CustomPolicy, tensorboard_log="./test/" )
         n_timesteps = n_timesteps * save_fraction
         n_timesteps = int(n_timesteps)
@@ -64,7 +64,7 @@ class PPO2_SB():
             self.model.save(save+str(i))
     
     
-    def evaluate(self, num_env=32, num_steps=4200, load="saves/defaultlstm4h", runs=10):
+    def evaluate(self, num_env=32, num_steps=30, load="saves/defaultlstmday8", runs=10):
         """
         Evaluate a RL agent
         :param model: (BaseRLModel object) the RL Agent
@@ -77,7 +77,7 @@ class PPO2_SB():
         #self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
         self.env = VecNormalize(self.env, norm_obs=False, norm_reward=True)
         for i in range(runs):
-            self.model = PPO2.load(load+str(i), self.env, policy=CustomPolicy_2, tensorboard_log="./default/" )
+            self.model = PPO2.load(load, self.env, policy=CustomPolicy_2, tensorboard_log="./default/" )
             episode_rewards = [[0.0] for _ in range(self.env.num_envs)]
             #self.total_pips = []
             obs = self.env.reset()
