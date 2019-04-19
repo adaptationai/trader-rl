@@ -72,6 +72,7 @@ class MarketSim():
         self.diff = self.state_current[0][1]
 
     def step(self, action):
+        #print(action)
         self.count += 1
         #self.render()
         self.get_price()
@@ -80,17 +81,18 @@ class MarketSim():
         d1 = self.player.balance
         pl1 = d1+10000
         self.pips = self.player.pips
+        #self.player.action(self.price, action, self.pm_price)
         self.player.action(self.price, action, self.pm_price)
         if self.live:
             self.market_live.live_step_delay()
         if self.count == self.steps:
-            self.player.close_position(self.price, self.pm_price)
+            self.player.close_position(self.price, self.pm_price, action)
         self.make_current_state(self.count)
         self.get_price()
         self.get_pm_price()
         self.get_diff()
-        #self.player.sl_check(self.state[-1])
-        #self.player.tp_check(self.state[-1])
+        self.player.sl_check(self.state[-1])
+        self.player.tp_check(self.state[-1])
         self.player.update(self.price, self.pm_price)
         d2 = self.player.balance
         pl2 = d2+10000

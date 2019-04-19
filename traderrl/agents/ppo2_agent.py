@@ -46,13 +46,13 @@ class PPO2_SB():
 
     def train(self, num_e=1, n_timesteps=10000000, save_fraction=0.1, save='saves/defaultlstmday'):
         env_id = "default"
-        num_e = 32  # Number of processes to use
+        num_e = 1  # Number of processes to use
         # Create the vectorized environment
         #env = DummyVecEnv([lambda: env])
         #Ramona
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_e)])
         self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
-        self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-5, tensorboard_log="./test" )
+        self.model = PPO2(CustomPolicy, self.env, verbose=0, learning_rate=1e-5, tensorboard_log="./test" )
         #self.model = PPO2.load("default9", self.env, policy=CustomPolicy, tensorboard_log="./test/" )
         n_timesteps = n_timesteps * save_fraction
         n_timesteps = int(n_timesteps)

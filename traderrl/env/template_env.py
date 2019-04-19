@@ -38,7 +38,8 @@ class Template_Gym(gym.Env):
         #self.reward_range = (0, MAX_ACCOUNT_BALANCE) 
         if self.discrete:
             # forward or backward in each dimension
-            self.action_space = spaces.Discrete(3)
+            #self.action_space = spaces.Discrete(3)
+            self.action_space = spaces.Box(low=np.array([0, 0, 0, 0]), high=np.array([3, 1, 1, 1]), dtype=np.float16)
 
             # observation is the x, y coordinate of the grid
             #low = np.zeros(0, dtype=int)
@@ -89,8 +90,8 @@ class Template_Gym(gym.Env):
         #self.next_state = self.next_state.tolist()
         self.total_pips.append(self.pips)
         if self.done:
-            print("total pips")
-            print(np.sum(self.total_pips))
+            #print("total pips")
+            #print(np.sum(self.total_pips))
             #print(len(self.total_pips))
             #self.starter += 1
             pass
