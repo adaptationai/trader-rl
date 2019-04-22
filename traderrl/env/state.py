@@ -79,8 +79,9 @@ class MarketSim():
         self.get_pm_price()
         self.get_diff()
         d1 = self.player.balance
-        pl1 = d1+10000
+        pl1 = d1
         self.pips = self.player.pips
+        #action = self.data_grabber.normalize(action)
         #self.player.action(self.price, action, self.pm_price)
         self.player.action(self.price, action, self.pm_price)
         if self.live:
@@ -95,16 +96,19 @@ class MarketSim():
         self.player.tp_check(self.state[-1])
         self.player.update(self.price, self.pm_price)
         d2 = self.player.balance
-        pl2 = d2+10000
+        pl2 = d2
         dy = d2 - d1
         rl = float(pl2) / float(pl1)
         rr= math.log(rl)
         self.reward = rr
-        self.reward = self.rewards()
-        if self.reward < 0:
-            self.reward = self.reward
+        #self.reward = self.rewards()
+        
+            #self.reward = self.reward
         state = self.state_maker()
         done = self.done(self.count)
+        if self.reward < 0:
+            done = True
+            #self.reward = self.reward * 10
         if done:
             self.pips = self.player.pips
         else:

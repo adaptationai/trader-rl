@@ -39,7 +39,7 @@ class Template_Gym(gym.Env):
         if self.discrete:
             # forward or backward in each dimension
             #self.action_space = spaces.Discrete(3)
-            self.action_space = spaces.Box(low=np.array([0, 0, 0, 0]), high=np.array([3, 1, 1, 1]), dtype=np.float16)
+            self.action_space = spaces.Box(low=np.array([-1, -1, -1, -1]), high=np.array([1, 1, 1, 1]), dtype=np.float16)
 
             # observation is the x, y coordinate of the grid
             #low = np.zeros(0, dtype=int)

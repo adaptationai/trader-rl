@@ -146,8 +146,8 @@ class Player():
             buy = m_price + self.half_spread
             diff_sl = self.get_sl(pm_price)
             diff_tp = self.get_tp(pm_price)
-            sl = action[2] * 0.001
-            tp = action[3] * 0.001 
+            sl = action[2] * 0.01
+            tp = action[3] * 0.01 
             sl = m_price - diff_sl
             tp = m_price + diff_tp
             lot = action[1] * 0.1
@@ -183,13 +183,17 @@ class Player():
                 self.reward = 0
         else:
             self.reward = 0
-        
+
+    def normalize(self, value, min, max):
+        normalized = (value - 0) / (1 - )
+        return normalized
     
     def open_position_short(self, m_price, pm_price, action):
         if len(self.positions) == 0:
             sell = m_price - self.half_spread
             diff_sl = self.get_sl(pm_price)
             diff_tp = self.get_tp(pm_price)
+            
             sl = action[2] * 0.001
             tp = action[3] * 0.001 
             sl = m_price + diff_sl
@@ -399,13 +403,13 @@ class Player():
         #x = int(x)
         #if self.placement < -0.200 or self.placement > 0.200:
             #self.close_position(m_price, pm_price)
-        if x[0] < 1:
+        if x[0] < -0.50:
             self.open_position_long(m_price, pm_price, x)
-        elif x[0] < 2:
+        elif x[0] < 0:
             self.open_position_short(m_price, pm_price, x)
-        elif x[0] < 3:
+        elif x[0] < 0.50:
             self.close_position(m_price, pm_price, x)
-        elif x[0] < 4:
+        elif x[0] <= 1:
             self.hold_position(m_price, pm_price)
         else:
             self.hold_position(m_price, pm_price)

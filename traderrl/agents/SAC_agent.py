@@ -17,10 +17,14 @@ from stable_baselines.deepq import DQN
 from ..env import Template_Gym
 from ..common import CustomPolicy, CustomPolicy_2
 env = Template_Gym()
-
+from stable_baselines.sac.policies import MlpPolicy, FeedForwardPolicy
 
 timestamp = datetime.datetime.now().strftime('%y%m%d%H%M%S')
-
+class CustomPolicy_sac(FeedForwardPolicy):
+    def __init__(self, *args, **kwargs):
+        super(CustomPolicy_sac, self).__init__(*args, **kwargs,
+                                           layers=[256, 256, 256],
+                                            feature_extraction="mlp")
 class PPO2_SB():
     def __init__(self):
         self.love = 'Ramona'
@@ -50,13 +54,13 @@ class PPO2_SB():
         # Create the vectorized environment
         #env = DummyVecEnv([lambda: env])
         #Ramona
-        self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_e)])
-        #env = Template_Gym()
-        #self.env = DummyVecEnv([lambda: env])
-        self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
-        self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-5, tensorboard_log="./test6" )
+        #self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_e)])
+        env = Template_Gym()
+        self.env = DummyVecEnv([lambda: env])
+        #self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
+        #self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-5, tensorboard_log="./test6" )
         
-        
+        self.model = SAC(CustomPolicy_sac, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./test8")
         #self.model = PPO2.load("default9", self.env, policy=CustomPolicy, tensorboard_log="./test/" )
         n_timesteps = n_timesteps * save_fraction
         n_timesteps = int(n_timesteps)
@@ -79,7 +83,7 @@ class PPO2_SB():
         num_e = 1
         self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_env)])
         #self.model = PPO2(CustomPolicy, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./default" )
-        self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
+        self.env = VecNormalize(self.env, norm_obs=False, norm_reward=True)
         for i in range(runs):
             self.model = PPO2.load(load+str(i), self.env, policy=CustomPolicy_2, tensorboard_log="./default/" )
             episode_rewards = [[0.0] for _ in range(self.env.num_envs)]
