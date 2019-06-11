@@ -92,13 +92,15 @@ class MarketSim():
         self.get_price()
         self.get_pm_price()
         self.get_diff()
-        self.player.sl_check(self.state[-1])
-        self.player.tp_check(self.state[-1])
+        #self.player.sl_check(self.state[-1])
+        #self.player.tp_check(self.state[-1])
+        
         self.player.update(self.price, self.pm_price)
         d2 = self.player.balance
         pl2 = d2
         dy = d2 - d1
         rl = float(pl2) / float(pl1)
+        #rl + 0.0000001
         rr= math.log(rl)
         self.reward = rr
         #self.reward = self.rewards()
@@ -106,9 +108,10 @@ class MarketSim():
             #self.reward = self.reward
         state = self.state_maker()
         done = self.done(self.count)
-        if self.reward < 0:
-            done = True
+        #if self.player.balance < 1000:
+            #done = True
             #self.reward = self.reward * 10
+            #self.render()
         if done:
             self.pips = self.player.pips
         else:
@@ -119,7 +122,7 @@ class MarketSim():
 
     def reset(self):
         self.starter = 0
-        #self.starter = np.random.random_integers(0,1440)
+        #self.starter = np.random.random_integers(0,96)
         self.count = 0
         self.make_episode()
         self.state = self.make_current_state(self.count)
@@ -143,9 +146,10 @@ class MarketSim():
 
     def state_maker(self):
         user = self.player.details(self.price)
-        market = self.state_over_time(self.state)
+        market, so = self.state_over_time(self.state)
         count = np.array([self.count])
-        state = self.data_grabber.flatten(market, user, count)
+        state = self.data_grabber.flatten(market, user, so)
+        #state = self.data_grabber.flatten2(market)
         return state
 
     def rewards(self):
@@ -177,11 +181,13 @@ class MarketSim():
             new_state.append([after, diff])
         return new_state
 
+    
+
     def difference2(self, state):
         #data_converted.append([i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o'], i['volume']])
         new_state = []
         
-        for i in range(len(state)):
+        for i in range(24):
             c = state[i][0]
             h = state[i][1]
             l = state[i][2]
@@ -200,13 +206,34 @@ class MarketSim():
 
     
 
+    def difference3(self, state):
+        #data_converted.append([i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o'], i['volume']])
+        new_state = []
+        close = state[-1][0]
+        for i in range(len(state)):
+    
+            h = state[i][1]
+            l = state[i][2]
+            o = state[i][3]
+            
+            c = close - o 
+            h = close - h
+            l = close - l
+        #v = state[i][4]
+        #day = state[i][5]
+        #hour = state[i][6]
+        #minute = state[i][7]
+    
+            
+
+            new_state.append([c, h, l])
         return new_state
     def state_over_time(self, state):
-        new_state = self.config.state_over_time(state)
-        #new_state = []
+        new_state2 = self.config.state_over_time(state)
+        new_state = self.difference3(state)
         #so = self.indicators.stocastic_oscillator_fixed(state)
         #new_state.append([so, state[-1][0],state[-1][1], state[-1][2], state[-1][3], state[-1][4], state[-1][5], state[-1][6], state[-2][0],state[-2][1], state[-2][2], state[-2][3], state[-2][4], state[-2][5], state[-2][6], state[-3][0],state[-3][1], state[-3][2], state[-3][3], state[-3][4], state[-3][5], state[-3][6], state[-4][0],state[-4][1], state[-4][2], state[-4][3], state[-4][4], state[-4][5], state[-4][6], state[-5][0],state[-5][1], state[-5][2], state[-5][3], state[-5][4], state[-5][5], state[-5][6], state[-6][0],state[-6][1], state[-6][2], state[-6][3], state[-6][4], state[-6][5], state[-6][6], state[-7][0],state[-7][1], state[-7][2], state[-7][3], state[-7][4], state[-7][5], state[-7][6], state[-8][0],state[-8][1], state[-8][2], state[-8][3], state[-8][4], state[-8][5], state[-8][6], state[-9][0],state[-9][1], state[-9][2], state[-9][3], state[-9][4], state[-9][5], state[-9][6] ,state[-10][0],state[-10][1], state[-10][2], state[-10][3], state[-10][4], state[-10][5], state[-10][6] ,state[-11][0],state[-11][1], state[-11][2], state[-11][3], state[-11][4], state[-11][5], state[-11][6], state[-12][0], state[-12][1], state[-12][2], state[-12][3], state[-12][4], state[-12][5], state[-12][6], state[-13][0], state[-13][1], state[-13][2], state[-13][3], state[-13][4], state[-13][5], state[-13][6], state[-14][0], state[-14][1], state[-14][2], state[-14][3], state[-14][4], state[-14][5], state[-14][6]])
-        return new_state
+        return new_state, new_state2
 
     
 

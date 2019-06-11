@@ -13,7 +13,7 @@ from .market_live import MarketLive
 class Player():
     def __init__(self, config):
         self.config = config
-        self.balance = 100
+        self.balance = 1000
         self.net_balance = 0
         self.placement = 0
         self.positions = []
@@ -30,7 +30,7 @@ class Player():
         self.diff = 0
         self.live_market = MarketLive()
         self.live = False
-        self.augmented = False
+        self.augmented = True
         #self.actions = [self.open_position_long(self.m_price), self.open_position_short(self.m_price), self.close_position(self.m_price), self.hold_position(self.m_price)]
         
 
@@ -146,11 +146,14 @@ class Player():
             buy = m_price + self.half_spread
             diff_sl = self.get_sl(pm_price)
             diff_tp = self.get_tp(pm_price)
-            sl = action[2] * 0.01
-            tp = action[3] * 0.01 
+            #sl = self.normalize(action[1])
+            #tp = self.normalize(action[2])
+            #sl = action[1] * 0.01
+            #tp = action[1] * 0.01 
             sl = m_price - diff_sl
             tp = m_price + diff_tp
-            lot = action[1] * 0.1
+            #lot = action[1] * 0.1
+            lot = 0.5
             self.positions.append([(buy), 1, sl, tp, lot])
             #self.pips += -2
             if self.live:
@@ -162,19 +165,27 @@ class Player():
                 pos = self.positions[0]
                 p_price = pos[0]
                 if pos[1] == -1:
-                    close = m_price - self.half_spread
-                    profit = close - p_price
+                    close = m_price + self.half_spread
+                    profit = p_price - close
                     lot = pos[4]
                     profit = self.pip_value(close, profit, lot)
+                    self.short_positions.append([p_price, close, profit])
                     self.balance = self.balance + profit
                     self.positions = []
                     self.placement = 0
                     buy = m_price + self.half_spread
-                    self.positions.append([(buy), 1])
-                    #self.pips += -2
-                    self.reward = 0
-                    #self.reward = profit * 10000
-                    #elf.update()
+                    diff_sl = self.get_sl(pm_price)
+                    diff_tp = self.get_tp(pm_price)
+                    #sl = self.normalize(action[1])
+                    #tp = self.normalize(action[2])
+                    #sl = action[1] * 0.01
+                    #tp = action[1] * 0.01 
+                    sl = m_price - diff_sl
+                    tp = m_price + diff_tp *2
+                    #lot = action[1] * 0.1
+                    lot = 0.5
+                    self.positions.append([(buy), 1, sl, tp, lot])
+                #self.pips += -2
                     if self.live:
                         self.live_market.position_close_short()
                         self.live_market.market_order_long()
@@ -184,8 +195,8 @@ class Player():
         else:
             self.reward = 0
 
-    def normalize(self, value, min, max):
-        normalized = (value - 0) / (1 - )
+    def normalize(self, value):
+        normalized = (value + 1) / 2
         return normalized
     
     def open_position_short(self, m_price, pm_price, action):
@@ -193,12 +204,14 @@ class Player():
             sell = m_price - self.half_spread
             diff_sl = self.get_sl(pm_price)
             diff_tp = self.get_tp(pm_price)
-            
-            sl = action[2] * 0.001
-            tp = action[3] * 0.001 
+            #sl = self.normalize(action[1])
+            #tp = self.normalize(action[2])
+            #sl = action[1] * 0.01
+            #tp = action[1] * 0.01 
             sl = m_price + diff_sl
             tp = m_price - diff_tp
-            lot = action[1] * 0.1
+            #lot = action[1] * 0.1
+            lot = 0.5
             self.positions.append([(sell), -1, sl, tp, lot])
             #print(self.positions)
             #self.pips += -2
@@ -211,20 +224,26 @@ class Player():
                 pos = self.positions[0]
                 p_price = pos[0]
                 if pos[1] == 1:
-                    close = m_price + self.half_spread
-                    profit = p_price - close
+                    close = m_price - self.half_spread
+                    profit = close - p_price
                     lot = pos[4]
                     profit = self.pip_value(close, profit, lot)
-                    self.short_positions.append([p_price, close, profit])
+                    self.long_positions.append([p_price, close, profit])
                     self.balance = self.balance + profit
                     self.positions = []
                     self.placement = 0
                     sell = m_price - self.half_spread
-                    self.positions.append([(sell), -1])
-                    #self.pips += -2
-                    self.reward = 0
-                    #self.reward = profit * 10000
-                    #elf.update()
+                    diff_sl = self.get_sl(pm_price)
+                    diff_tp = self.get_tp(pm_price)
+                    #sl = self.normalize(action[1])
+                    #tp = self.normalize(action[2])
+                    #sl = action[1] * 0.01
+                    #tp = action[1] * 0.01 
+                    sl = m_price + diff_sl
+                    tp = m_price - diff_tp * 2
+                    #lot = action[1] * 0.1
+                    lot = 0.5
+                    self.positions.append([(sell), -1, sl, tp, lot])
                     if self.live:
                         self.live_market.position_close_long()
                         self.live_market.market_order_short()
@@ -400,16 +419,17 @@ class Player():
         #print(len)
         #self.update(m_price)
         x = action
+        #x = self.normalize(x)
         #x = int(x)
         #if self.placement < -0.200 or self.placement > 0.200:
             #self.close_position(m_price, pm_price)
-        if x[0] < -0.50:
+        if x == 0:
             self.open_position_long(m_price, pm_price, x)
-        elif x[0] < 0:
+        elif x == 1:
             self.open_position_short(m_price, pm_price, x)
-        elif x[0] < 0.50:
+        elif x == 2:
             self.close_position(m_price, pm_price, x)
-        elif x[0] <= 1:
+        elif x == 3:
             self.hold_position(m_price, pm_price)
         else:
             self.hold_position(m_price, pm_price)

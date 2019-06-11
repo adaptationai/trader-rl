@@ -56,6 +56,9 @@ class Indicators():
         l = np.min(low)
         p = (c - l) / (h - l) * 100
         return p
+    def sma(self, a,b,c):
+        s = (a+b+c) / 3
+        return s
 
     def average_diff(self, state):
     

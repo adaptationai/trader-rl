@@ -25,7 +25,7 @@ class CustomPolicy_sac(FeedForwardPolicy):
         super(CustomPolicy_sac, self).__init__(*args, **kwargs,
                                            layers=[256, 256, 256],
                                             feature_extraction="mlp")
-class PPO2_SB():
+class SAC_SB():
     def __init__(self):
         self.love = 'Ramona'
         self.env_fns = [] 
@@ -48,7 +48,7 @@ class PPO2_SB():
         return _init
     
 
-    def train(self, num_e=1, n_timesteps=10000000, save_fraction=0.1, save='saves/defaultlstmday'):
+    def train(self, num_e=1, n_timesteps=10000000, save_fraction=0.1, save='saves/m1'):
         env_id = "default"
         num_e = 32  # Number of processes to use
         # Create the vectorized environment
@@ -57,10 +57,10 @@ class PPO2_SB():
         #self.env = SubprocVecEnv([self.make_env(env_id, i) for i in range(num_e)])
         env = Template_Gym()
         self.env = DummyVecEnv([lambda: env])
-        #self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
+        self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
         #self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-5, tensorboard_log="./test6" )
         
-        self.model = SAC(CustomPolicy_sac, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./test8")
+        self.model = SAC(CustomPolicy_sac, self.env, verbose=1, learning_rate=1e-5, tensorboard_log="./m1lstm1")
         #self.model = PPO2.load("default9", self.env, policy=CustomPolicy, tensorboard_log="./test/" )
         n_timesteps = n_timesteps * save_fraction
         n_timesteps = int(n_timesteps)

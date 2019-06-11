@@ -24,7 +24,7 @@ class Template_Gym(gym.Env):
         self.reward = None
         self.done = False
         self.state = None
-        self.action_dim = 3
+        self.action_dim = 4
         self.state_dim = 32
         self.num_envs = 1
         self.num_envs_per_sub_batch = 1
@@ -38,16 +38,16 @@ class Template_Gym(gym.Env):
         #self.reward_range = (0, MAX_ACCOUNT_BALANCE) 
         if self.discrete:
             # forward or backward in each dimension
-            #self.action_space = spaces.Discrete(3)
-            self.action_space = spaces.Box(low=np.array([-1, -1, -1, -1]), high=np.array([1, 1, 1, 1]), dtype=np.float16)
+            self.action_space = spaces.Discrete(3)
+            #self.action_space = spaces.Box(low=np.array([0, 0]), high=np.array([1, 1]), dtype=np.float32)
 
             # observation is the x, y coordinate of the grid
             #low = np.zeros(0, dtype=int)
             #high =  np.array(1, dtype=int) - np.ones(len(self.maze_size), dtype=int)
-            self.observation_space = spaces.Box(low=-10, high=10, shape=(109,))
+            self.observation_space = spaces.Box(low=-1000, high=1000, shape=(58,))
         else:
             # Actions of the format Buy x%, Sell x%, Hold, etc.
-            self.action_space = spaces.Box(low=np.array([0, 0]), high=np.array([3, 1]), dtype=np.float16)
+            self.action_space = spaces.Box(low=np.array([0, 0]), high=np.array([3, 1]), dtype=np.float32)
             #or
             #self.action_space = spaces.Box(low=np.array([0, 0, 0, 0]), high=np.array([3, 1, 1, 1]), dtype=np.float16)
 

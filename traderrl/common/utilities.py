@@ -22,7 +22,7 @@ class DataGrabber():
         self.love = 14
         self.auth = Auth()
         self.client = oandapyV20.API(access_token=self.auth.access_token)
-        self.years = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008','2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '1998']
+        self.years = ['2018','2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008','2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '1998', '1997']
         self.instrument = ['EUR_USD', 'AUD_USD', 'GBP_USD', 'NZD_USD', 'USD_CHF', 'USD_CAD']
         self.time = ['00:00:00']
         self.hour = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
@@ -30,8 +30,16 @@ class DataGrabber():
         self.day_feb = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28']
         self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
         self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+        self.years_list = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008','2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '1998', '1997']
+        self.instrument_list = ['AUD_USD']
+        #self.years_list = ['2018']
+        #dodgy 2011, '2009' '2008'
+        self.years_list = ['2018']
         self.granularity= ['M1', 'M5', 'M15', 'M30', 'H1', 'H4']
-        self.full_year = np.load('data/AUD_USD84H4TRAIN.npy')
+        self.year = random.choice(self.years_list)
+        self.instruments = random.choice(self.instrument_list)
+        self.full_year = np.load('data/'+self.instruments+'60D'+self.year+'.npy')
+        #self.full_year = np.load('data/EUR_USD60D2018.npy')
         self.day_feb_2 = ['28']
         
 
@@ -45,7 +53,8 @@ class DataGrabber():
     def data_converted(self, data):
         data_converted  = []
         for i in data['candles']:
-            data_converted.append([i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o'], i['volume'], i['time']])
+            if i['complete'] == True:
+                data_converted.append([i['mid']['c'], i['mid']['h'], i['mid']['l'], i['mid']['o'], i['volume'], i['time']])
 
         return data_converted
 
@@ -102,18 +111,19 @@ class DataGrabber():
         return data
 
     def process_to_array_2(self):
-        full_data = []
+        
         #self.years = ['2018']
         #self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11']
-        self.hist = 2900
+        self.hist = 60
         #self.hist = 5760
-        self.t_frame = "M1"
-        #self.month = ['01','02']
-        #self.year = ['2018']
+        self.t_frame = "D"
+        self.month = ['01','02','3']
+        self.years = ['2019']
         
         self.instrument = ['AUD_USD']
         for i in self.instrument:
             for y in self.years:
+                full_data = []
                 for m in self.month:
                     if m == "02":
                         day = self.day_feb_2
@@ -127,7 +137,7 @@ class DataGrabber():
             
                         full_data.append(data)
         #full_data = self.flatten_simple(full_data)
-        np.save('data/'+ self.instrument[0] + str(self.hist) + self.t_frame + '.npy', full_data)
+                np.save('data/'+ self.instrument[0] + str(self.hist) + self.t_frame + y + '.npy', full_data)
 
         return full_data
 
@@ -158,7 +168,14 @@ class DataGrabber():
 
         #k = self.data_grabber.flatten(market_details, player_details)
         return flattened
+        
+    def flatten2(self, u):
+        u = np.concatenate((u), axis=None)
+    
+        flattened = np.concatenate(u, axis=None)
 
+        #k = self.data_grabber.flatten(market_details, player_details)
+        return flattened
     def flatten_simple(self, u):
         u = np.concatenate((u), axis=None)
         #m = np.concatenate((m), axis=None)
