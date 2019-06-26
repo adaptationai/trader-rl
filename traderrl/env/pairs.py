@@ -1,7 +1,7 @@
 from .state_over_time import state_over_time_day
 from ..common import Indicators
 class PairDefault():
-    def __init__(self, pair="AUD_USD", start=0, end=15, steps=29, spread=0.0002, half_spread=0.0001, load=True, live=False):
+    def __init__(self, pair="AUD_USD", start=0, end=15, steps=288, spread=0.0002, half_spread=0.0001, load=True, live=False):
         self.live = live
         self.load = load
         self.pair = pair

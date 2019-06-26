@@ -5,11 +5,12 @@ from .state import *
 class Template():
     """Base class for Unity ML environments using unityagents (v0.4)."""
 
-    def __init__(self, name='trader', seed=0):
+    def __init__(self, name='trader', seed=0, eval=False):
         self.seed = seed
+        self.eval = eval
         print('SEED: {}'.format(self.seed))
         self.start = 0
-        self.env = MarketSim(self.start)
+        self.env = MarketSim(self.start, eval=self.eval)
         self.player = self.env.player
         self.pips = self.env.pips
         
@@ -18,7 +19,7 @@ class Template():
     def reset(self):
         """Reset the environment."""
         #info = self.env.reset(train_mode=True)[self.brain_name]
-        self.env = MarketSim(self.start)
+        self.env = MarketSim(self.start, eval=self.eval)
         state = self.env.reset()
         return state
 

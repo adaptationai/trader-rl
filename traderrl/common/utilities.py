@@ -17,8 +17,8 @@ import datetime
 class DataGrabber():
     """gets data and processes ready to use"""
 
-    def __init__(self):
-        
+    def __init__(self, eval):
+        self.eval = eval
         self.love = 14
         self.auth = Auth()
         self.client = oandapyV20.API(access_token=self.auth.access_token)
@@ -30,17 +30,22 @@ class DataGrabber():
         self.day_feb = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28']
         self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
         self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-        self.years_list = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008','2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '1998', '1997']
-        self.instrument_list = ['AUD_USD']
-        #self.years_list = ['2018']
-        #dodgy 2011, '2009' '2008'
-        self.years_list = ['2018']
         self.granularity= ['M1', 'M5', 'M15', 'M30', 'H1', 'H4']
+        self.day_feb_2 = ['28']
+        if self.eval == True:
+            self.years_list = ['2018', '2017']
+        else:
+            self.years_list = ['2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009']
+        self.instrument_list = ['AUD_USD']
+        
+        #dodgy 2011, '2009' '2008'
+        #self.years_list = ['2017']
+        
         self.year = random.choice(self.years_list)
         self.instruments = random.choice(self.instrument_list)
-        self.full_year = np.load('data/'+self.instruments+'60D'+self.year+'.npy')
+        self.full_year = np.load('data/'+self.instruments+'480M15'+self.year+'.npy')
         #self.full_year = np.load('data/EUR_USD60D2018.npy')
-        self.day_feb_2 = ['28']
+        
         
 
     def get_candles(self, _from,  count, granularity, instrument):
@@ -114,11 +119,11 @@ class DataGrabber():
         
         #self.years = ['2018']
         #self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11']
-        self.hist = 60
+        self.hist = 480
         #self.hist = 5760
-        self.t_frame = "D"
-        self.month = ['01','02','3']
-        self.years = ['2019']
+        self.t_frame = "M15"
+        #self.month = ['01','02','3']
+        #self.years = ['2019']
         
         self.instrument = ['AUD_USD']
         for i in self.instrument:
@@ -160,11 +165,11 @@ class DataGrabber():
             x.append(con)
         return x
 
-    def flatten(self, u, m, c):
+    def flatten(self, u, m):
         u = np.concatenate((u), axis=None)
         m = np.concatenate((m), axis=None)
-        c = np.concatenate((c), axis=None)
-        flattened = np.concatenate((m, u, c), axis=None)
+        #c = np.concatenate((c), axis=None)
+        flattened = np.concatenate((m, u), axis=None)
 
         #k = self.data_grabber.flatten(market_details, player_details)
         return flattened

@@ -17,8 +17,9 @@ class Template_Gym(gym.Env):
     #Define Actions
     ACTION = [0,1]
 
-    def __init__(self, env=Template()):
-        self.env = env
+    def __init__(self, eval=False):
+        self.eval=eval
+        self.env = Template(eval=self.eval)
         self.viewer = None
         self.info = None
         self.reward = None
@@ -35,7 +36,7 @@ class Template_Gym(gym.Env):
         self.discrete = True
 
         #self.df = df
-        #self.reward_range = (0, MAX_ACCOUNT_BALANCE) 
+        #self.reward_range = (0, MAX_ACCOUNT_BAL2NCE) 
         if self.discrete:
             # forward or backward in each dimension
             self.action_space = spaces.Discrete(3)
@@ -44,7 +45,7 @@ class Template_Gym(gym.Env):
             # observation is the x, y coordinate of the grid
             #low = np.zeros(0, dtype=int)
             #high =  np.array(1, dtype=int) - np.ones(len(self.maze_size), dtype=int)
-            self.observation_space = spaces.Box(low=-1000, high=1000, shape=(58,))
+            self.observation_space = spaces.Box(low=-10000, high=10000, shape=(54,))
         else:
             # Actions of the format Buy x%, Sell x%, Hold, etc.
             self.action_space = spaces.Box(low=np.array([0, 0]), high=np.array([3, 1]), dtype=np.float32)

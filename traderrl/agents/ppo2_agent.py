@@ -30,7 +30,7 @@ class PPO2_SB():
         self.env_fns = [] 
         self.env_names = []
     
-    def make_env(self, env_id, rank, seed=0):
+    def make_env(self, env_id, rank, seed=0, eval=False):
         """
         Utility function for multiprocessed env.
     
@@ -40,14 +40,15 @@ class PPO2_SB():
         :param rank: (int) index of the subprocess
         """
         def _init():
-            env = Template_Gym()
+            self.eval= eval
+            env = Template_Gym(eval=self.eval)
             env.seed(seed + rank)
             return env
         set_global_seeds(seed)
         return _init
     
 
-    def train(self, num_e=1, n_timesteps=1000000, save_fraction=0.1, save='saves/aud5'):
+    def train(self, num_e=1, n_timesteps=100000000, save_fraction=0.1, save='saves/min1'):
         env_id = "default"
         num_e = 1  # Number of processes to use
         # Create the vectorized environment
@@ -57,7 +58,7 @@ class PPO2_SB():
         #env = Template_Gym()
         #self.env = DummyVecEnv([lambda: env])
         self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
-        self.model = PPO2(CustomPolicy_4, self.env, verbose=0, learning_rate=1e-4, nminibatches=1, tensorboard_log="./day1" )
+        self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-4, nminibatches=1, tensorboard_log="./min1" )
         
         
         #self.model = PPO2.load("default9", self.env, policy=CustomPolicy, tensorboard_log="./test/" )
@@ -73,7 +74,7 @@ class PPO2_SB():
         self.env.save_running_average(log_dir)
     
     
-    def evaluate(self, num_env=1, num_steps=21900, load="saves/aud5", runs=10):
+    def evaluate(self, num_env=1, num_steps=175200, load="saves/min", runs=2):
         """
         Evaluate a RL agent
         :param model: (BaseRLModel object) the RL Agent
@@ -88,7 +89,7 @@ class PPO2_SB():
         self.env = VecNormalize(self.env, norm_obs=True, norm_reward=True)
         self.env.load_running_average(log_dir)
         for i in range(runs):
-            self.model = PPO2.load(load+str(i), self.env, policy=CustomPolicy_4,  tensorboard_log="./default/" )
+            self.model = PPO2.load(load+str(i), self.env, policy=CustomPolicy_2,  tensorboard_log="./default/" )
             self.env.load_running_average(log_dir)
             episode_rewards = [[0.0] for _ in range(self.env.num_envs)]
             #self.total_pips = []
@@ -98,7 +99,7 @@ class PPO2_SB():
             done = [False for _ in range(env.num_envs)]
             for i in range(num_steps):
                 # _states are only useful when using LSTM policies
-                action, state = self.model.predict(obs, state=state, mask=done, deterministic=True)
+                action, state = self.model.predict(obs, state=state, mask=done, deterministic=False)
                 obs, rewards , dones, _ = self.env.step(action)
                 #actions, _states = self.model.predict(obs)
                 # # here, action, rewards and dones are arrays
