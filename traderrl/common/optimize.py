@@ -10,20 +10,38 @@ import optuna
 import pandas as pd
 import numpy as np
 
-from stable_baselines.common.policies import MlpLnLstmPolicy
-from stable_baselines.common.vec_env import DummyVecEnv
-from stable_baselines import PPO2
-
 from pathlib import Path
+import time
 
-from env.BitcoinTradingEnv import BitcoinTradingEnv
-from util.indicators import add_indicators
+import gym
+import numpy as np
+import os
+import datetime
+import csv
+import argparse
+from functools import partial
+
+from stable_baselines.common.policies import MlpLnLstmPolicy, LstmPolicy, CnnPolicy
+from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv,VecNormalize 
+from stable_baselines.common import set_global_seeds
+from stable_baselines import ACKTR, PPO2, SAC
+from stable_baselines.deepq import DQN
+#from stable_baselines.deepq.policies import FeedForwardPolicy
+from ..env import Template_Gym
+from ..common import CustomPolicy, CustomPolicy_2, CustomLSTMPolicy, CustomPolicy_4
+env = Template_Gym()
+from stable_baselines.gail import generate_expert_traj
+
+from stable_baselines.gail import ExpertDataset
+
+
+timestamp = datetime.datetime.now().strftime('%y%m%d%H%M%S')
 
 class Optimization():
     def __init__(self):
 
         self.reward_strategy = 'sortino'
-        self.input_data_file = 'data/coinbase_hourly.csv'
+        #self.input_data_file = 'data/coinbase_hourly.csv'
         self.params_db_file = 'sqlite:///params.db'
 
         # number of parallel jobs
@@ -31,24 +49,41 @@ class Optimization():
         # maximum number of trials for finding the best hyperparams
         self.n_trials = 1000
         #number of test episodes per trial
-        self.n_test_episodes = 3
+        self.n_test_episodes = 300
         # number of evaluations for pruning per trial
-        self.n_evaluations = 4
+        self.n_evaluations = 400
 
 
-        self.df = pd.read_csv(input_data_file)
-        self.df = df.drop(['Symbol'], axis=1)
-        self.df = df.sort_values(['Date'])
-        self.df = add_indicators(df.reset_index())
+        #self.df = pd.read_csv(input_data_file)
+        #self.df = df.drop(['Symbol'], axis=1)
+        #self.df = df.sort_values(['Date'])
+        #self.df = add_indicators(df.reset_index())
 
-        self.train_len = int(len(df) * 0.8)
+        #self.train_len = int(len(df) * 0.8)
 
-        self.df = df[:train_len]
+        #self.df = df[:train_len]
 
-        self.validation_len = int(train_len * 0.8)
-        self.train_df = df[:validation_len]
-        self.test_df = df[validation_len:]
+        #self.validation_len = int(train_len * 0.8)
+        #self.train_df = df[:validation_len]
+        #self.test_df = df[validation_len:]
 
+    def make_env(self, env_id, rank, seed=0, eval=False):
+        """
+        Utility function for multiprocessed env.
+    
+        :param env_id: (str) the environment ID
+        :param num_env: (int) the number of environment you wish to have in subprocesses
+        :param seed: (int) the inital seed for RNG
+        :param rank: (int) index of the subprocess
+        """
+        def _init():
+            self.eval= eval
+            env = Template_Gym(eval=self.eval)
+            env.seed(seed + rank)
+            return env
+        set_global_seeds(seed)
+        return _init
+    
 
     def optimize_envs(self, trial):
         return {
@@ -72,38 +107,41 @@ class Optimization():
 
     def optimize_agent(self,trial):
         self.env_params = self.optimize_envs(trial)
-        self.train_env = DummyVecEnv(
-            [lambda: BitcoinTradingEnv(self.train_df,  **self.env_params)])
-        self.test_env = DummyVecEnv(
-            [lambda: BitcoinTradingEnv(self.test_df, **self.env_params)])
+        env_id = "default"
+        num_e = 1  # Number of processes to use
+        self.train_env = SubprocVecEnv([self.make_env(env_id, i, eval=False) for i in range(num_e)])
+        self.train_env = VecNormalize(self.train_env, norm_obs=True, norm_reward=True)
+        self.test_env = SubprocVecEnv([self.make_env(env_id, i, eval=False) for i in range(num_e)])
+        self.test_env = VecNormalize(self.train_env, norm_obs=True, norm_reward=True)
 
         self.model_params = self.optimize_ppo2(trial)
-        model = PPO2(MlpLnLstmPolicy, self.train_env, verbose=0, nminibatches=1,
+        self.model = PPO2(CustomPolicy_2, self.train_env, verbose=0, nminibatches=1,
                     tensorboard_log=Path("./tensorboard").name, **self.model_params)
+        #self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-4, nminibatches=1, tensorboard_log="./min1" )
 
         last_reward = -np.finfo(np.float16).max
-        evaluation_interval = int(len(train_df) / n_evaluations)
+        evaluation_interval = int(len(train_df) / self.n_evaluations)
 
-        for eval_idx in range(n_evaluations):
+        for eval_idx in range(self.n_evaluations):
             try:
-                model.learn(evaluation_interval)
+                self.model.learn(evaluation_interval)
             except AssertionError:
                 raise
 
             rewards = []
             n_episodes, reward_sum = 0, 0.0
 
-            obs = test_env.reset()
-            while n_episodes < n_test_episodes:
-                action, _ = model.predict(obs)
-                obs, reward, done, _ = test_env.step(action)
+            obs = self.test_env.reset()
+            while n_episodes < self.n_test_episodes:
+                action, _ = self.model.predict(obs)
+                obs, reward, done, _ = self.test_env.step(action)
                 reward_sum += reward
 
                 if done:
                     rewards.append(reward_sum)
                     reward_sum = 0.0
                     n_episodes += 1
-                    obs = test_env.reset()
+                    obs = self.test_env.reset()
 
             last_reward = np.mean(rewards)
             trial.report(-1 * last_reward, eval_idx)
