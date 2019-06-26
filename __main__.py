@@ -6,12 +6,15 @@ from traderrl import PPO2_SB
 from traderrl import SAC_SB
 from traderrl import DataGrabber
 from traderrl import MarketLive
+from traderrl import Optimization
 
 
 def main():
     #test = DataGrabber()
     #test.process_to_array_2()
     #test = SAC_SB()
+    #test = Optimization()
+    #test.optimize()
     test = PPO2_SB()
     test.train()
     #test.evaluate()

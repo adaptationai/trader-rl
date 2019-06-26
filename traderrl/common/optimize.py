@@ -106,7 +106,7 @@ class Optimization():
 
 
     def optimize_agent(self,trial):
-        self.env_params = self.optimize_envs(trial)
+        #self.env_params = self.optimize_envs(trial)
         env_id = "default"
         num_e = 1  # Number of processes to use
         self.train_env = SubprocVecEnv([self.make_env(env_id, i, eval=False) for i in range(num_e)])
@@ -120,7 +120,8 @@ class Optimization():
         #self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-4, nminibatches=1, tensorboard_log="./min1" )
 
         last_reward = -np.finfo(np.float16).max
-        evaluation_interval = int(len(train_df) / self.n_evaluations)
+        #evaluation_interval = int(len(train_df) / self.n_evaluations)
+        evaluation_interval = 300
 
         for eval_idx in range(self.n_evaluations):
             try:
