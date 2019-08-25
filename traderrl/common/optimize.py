@@ -29,7 +29,7 @@ from stable_baselines.deepq import DQN
 #from stable_baselines.deepq.policies import FeedForwardPolicy
 from ..env import Template_Gym
 from ..common import CustomPolicy, CustomPolicy_2, CustomLSTMPolicy, CustomPolicy_4
-env = Template_Gym()
+#env = Template_Gym()
 from stable_baselines.gail import generate_expert_traj
 
 from stable_baselines.gail import ExpertDataset
@@ -40,18 +40,18 @@ timestamp = datetime.datetime.now().strftime('%y%m%d%H%M%S')
 class Optimization():
     def __init__(self):
 
-        self.reward_strategy = 'sortino'
+        self.reward_strategy = 'sortino2'
         #self.input_data_file = 'data/coinbase_hourly.csv'
         self.params_db_file = 'sqlite:///params.db'
 
         # number of parallel jobs
-        self.n_jobs = 4
+        self.n_jobs = 1
         # maximum number of trials for finding the best hyperparams
-        self.n_trials = 1000
+        self.n_trials = 100
         #number of test episodes per trial
-        self.n_test_episodes = 300
+        self.n_test_episodes = 10
         # number of evaluations for pruning per trial
-        self.n_evaluations = 400
+        self.n_evaluations = 10
 
 
         #self.df = pd.read_csv(input_data_file)
@@ -109,19 +109,23 @@ class Optimization():
         #self.env_params = self.optimize_envs(trial)
         env_id = "default"
         num_e = 1  # Number of processes to use
-        self.train_env = SubprocVecEnv([self.make_env(env_id, i, eval=False) for i in range(num_e)])
+        self.train_env = DummyVecEnv(
+            [lambda: Template_Gym(eval=False)])
+        #self.train_env = SubprocVecEnv([self.make_env(env_id, i, eval=False) for i in range(num_e)])
         self.train_env = VecNormalize(self.train_env, norm_obs=True, norm_reward=True)
-        self.test_env = SubprocVecEnv([self.make_env(env_id, i, eval=False) for i in range(num_e)])
+        self.test_env = DummyVecEnv(
+            [lambda: Template_Gym(eval=True)])
+        #self.test_env = SubprocVecEnv([self.make_env(env_id, i, eval=True) for i in range(num_e)])
         self.test_env = VecNormalize(self.train_env, norm_obs=True, norm_reward=True)
 
         self.model_params = self.optimize_ppo2(trial)
         self.model = PPO2(CustomPolicy_2, self.train_env, verbose=0, nminibatches=1,
-                    tensorboard_log=Path("./tensorboard").name, **self.model_params)
+                    tensorboard_log=Path("./tensorboard2").name, **self.model_params)
         #self.model = PPO2(CustomPolicy_2, self.env, verbose=0, learning_rate=1e-4, nminibatches=1, tensorboard_log="./min1" )
 
         last_reward = -np.finfo(np.float16).max
         #evaluation_interval = int(len(train_df) / self.n_evaluations)
-        evaluation_interval = 300
+        evaluation_interval = 3000
 
         for eval_idx in range(self.n_evaluations):
             try:

@@ -1,6 +1,9 @@
 import numpy as np
+import gym
+from gym import error, spaces, utils
+from gym.utils import seeding
 #from utilities import DataGrabber
-import torch
+#import torch
 from .player import Player
 from ..common import DataGrabber
 import numpy
@@ -17,7 +20,12 @@ from .pairs import PairDefault
 from ..common import Auth
 from ..common import Indicators
 #from ..common import DataGrabber
-class MarketSim():
+class MarketSim(gym.Env):
+    metadata = {
+        "render.modes": ["human", "rgb_array"],
+    }
+    #Define Actions
+    ACTION = [0,1]
     def __init__(self, start, eval=False, config=PairDefault()):
         self.config = config
         self.love = 14
@@ -123,8 +131,11 @@ class MarketSim():
 
 
     def reset(self):
-        #self.starter = 0
-        self.starter = np.random.random_integers(0,96)
+        self.data_grabber = DataGrabber()
+        self.player = Player(self.config)
+        
+        self.starter = 0
+        #self.starter = np.random.random_integers(0,96)
         self.count = 0
         self.make_episode()
         self.state = self.make_current_state(self.count)
@@ -141,8 +152,8 @@ class MarketSim():
         #print(f'diff:{self.diff}')
         #print(f'Count:{self.count}')
         #print(f'Reward:{self.reward}')
-        self.player.render()
-        self.player.result()
+        #self.player.render()
+        #self.player.result()
         return
 
 

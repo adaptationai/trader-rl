@@ -19,7 +19,7 @@ class Template():
     def reset(self):
         """Reset the environment."""
         #info = self.env.reset(train_mode=True)[self.brain_name]
-        self.env = MarketSim(self.start, eval=self.eval)
+        #self.env = MarketSim(self.start, eval=self.eval)
         state = self.env.reset()
         return state
 

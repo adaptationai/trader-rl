@@ -4,3 +4,4 @@ from .auth import Auth
 from .indicators import Indicators
 from .policy import *
 from .optimize import *
+from .log import *

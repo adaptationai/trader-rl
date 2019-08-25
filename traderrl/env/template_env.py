@@ -1,5 +1,5 @@
 import numpy as np
-
+from .state import *
 import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
@@ -19,7 +19,10 @@ class Template_Gym(gym.Env):
 
     def __init__(self, eval=False):
         self.eval=eval
-        self.env = Template(eval=self.eval)
+        self.start = 0
+        self.env = MarketSim(self.start, eval=self.eval)
+        self.player = self.env.player
+        self.pips = self.env.pips
         self.viewer = None
         self.info = None
         self.reward = None

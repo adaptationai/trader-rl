@@ -17,7 +17,7 @@ import datetime
 class DataGrabber():
     """gets data and processes ready to use"""
 
-    def __init__(self, eval):
+    def __init__(self, eval=False):
         self.eval = eval
         self.love = 14
         self.auth = Auth()
@@ -43,7 +43,7 @@ class DataGrabber():
         
         self.year = random.choice(self.years_list)
         self.instruments = random.choice(self.instrument_list)
-        self.full_year = np.load('data/'+self.instruments+'480M15'+self.year+'.npy')
+        self.full_year = np.load('data/'+self.instruments+'60D'+self.year+'.npy')
         #self.full_year = np.load('data/EUR_USD60D2018.npy')
         
         

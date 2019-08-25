@@ -16,7 +16,7 @@ from stable_baselines.deepq import DQN
 #from stable_baselines.deepq.policies import FeedForwardPolicy
 from ..env import Template_Gym
 from ..common import CustomPolicy, CustomPolicy_2, CustomLSTMPolicy, CustomPolicy_4
-env = Template_Gym()
+#env = Template_Gym()
 from stable_baselines.gail import generate_expert_traj
 
 from stable_baselines.gail import ExpertDataset
