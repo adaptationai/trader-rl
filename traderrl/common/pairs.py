@@ -60,23 +60,23 @@ USD2000USD = US RUSS 2000
 
  
 
-AUSJPY = aus jpy
+AUS_JPY = aus jpy
 
-AUDNZD = aus nz
+AUD_NZD = aus nz
 
-AUDUSD = AUS usd
+AUD_USD = AUS usd
 
-EURAUD = euro aud
+EUR_AUD = euro aud
 
-AUDCAD = aus Canada
+AUD_CAD = aus Canada
 
-GBPAUS = great britan aus
+GBP_AUS = great britan aus
 
-AUDCHF = CHF
+AUD_CHF = CHF
 
-XAGAUD = silver
+XAG_AUD = silver
 
-XAUAUD = gold aus
+XAU_AUD = gold aus
 
-AU200AUD = AU 200
+AU200_AUD = AU 200
 """

@@ -11,7 +11,8 @@ from traderrl import Optimization
 
 def main():
     test = DataGrabber()
-    test.process_to_array_2()
+    #test.process_to_array_2()
+    test.process_to_array_full()
     #test = SAC_SB()
     #test = Optimization()
     #test.optimize()

@@ -22,7 +22,16 @@ class DataGrabber():
         self.love = 14
         self.auth = Auth()
         self.client = oandapyV20.API(access_token=self.auth.access_token)
-        self.years = ['2018','2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008','2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '1998', '1997']
+        self.usd_crypto = ['BTC_USD']
+        self.usd_pairs = ['AUD_USD','EUR_USD', 'USD_JPY', 'GBP_USD', 'USD_CAD', 'USD_CNY', 'USD_CHF', 'NZD_USD']
+        self.usd_commod = ['BCO_USD', 'XAU_USD', 'XAG_USD', 'WTICO_USD', 'CORN_USD', 'WHEAT_USD', 'XPD_USD', 'XPT_USD', 'SUGAR_USD', 'SOYBN_USD', 'NATGAS_USD', 'XCU_USD' ]
+        self.usd_index = ['US30_USD', 'SPX500_USD', 'NAS100_USD', 'US2000_USD' ]
+        self.usd_bonds = ['USB02Y_USD', 'USB05Y_USD', 'USB10Y_USD', 'USB30Y_USD']
+        self.aud_pairs = ['AUD_USD','AUS_JPY', 'AUD_NZD', 'EUR_AUD', 'AUD_CAD', 'GBP_AUD', 'AUD_CHF', 'AUD_CNY']
+        self.aud_index = ['AU200_AUD']
+        self.aud_commod = ['XAG_AUD', 'XAU_AUD']
+        self.aud_usd_all = ['AUD_USD','EUR_USD', 'USD_JPY', 'GBP_USD', 'USD_CAD', 'USD_CNY', 'USD_CHF', 'NZD_USD', 'BTC_USD', 'BCO_USD', 'XAU_USD', 'XAG_USD', 'WTICO_USD', 'CORN_USD', 'WHEAT_USD', 'XPD_USD', 'XPT_USD', 'SUGAR_USD', 'SOYBN_USD', 'NATGAS_USD', 'XCU_USD', 'US30_USD', 'SPX500_USD', 'NAS100_USD', 'US2000_USD', 'USB02Y_USD', 'USB05Y_USD', 'USB10Y_USD', 'USB30Y_USD', 'AUD_JPY', 'AUD_NZD', 'EUR_AUD', 'AUD_CAD', 'GBP_AUD', 'AUD_CHF', 'AUD_CNY', 'AU200_AUD', 'XAG_AUD', 'XAU_AUD']
+        self.years = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008','2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '1998', '1997']
         self.instrument = ['EUR_USD', 'AUD_USD', 'GBP_USD', 'NZD_USD', 'USD_CHF', 'USD_CAD']
         self.time = ['00:00:00']
         self.hour = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
@@ -152,23 +161,24 @@ class DataGrabber():
 
     def process_to_array_full(self):
         
-        self.years = ['2017']
-        self.hist = 365
+        
+        self.years = ['1997']
+        self.hist = 3680
         self.t_frame = "D"
-        self.instrument = ['AUD_USD','SPX500_USD']
-
+        #self.instrument = ['AUD_CNY']
+        self.instruments_all = self.aud_usd_all
         for y in self.years:
             full_data = []
-            for i in self.instrument:
+            for i in self.instruments_all:
                 
                 data = self.get_candles(y+'-12-31T21:00:00Z', self.hist, self.t_frame, i)
                 data = self.data_converted(data)
                 data = self.time_to_array(data)
                 data = self.toarray(data)
-            
+
                 full_data.append(data)
         #full_data = self.flatten_simple(full_data)
-            np.save('data/'+ self.instrument[0] + str(self.hist) + self.t_frame + y + '.npy', full_data)
+            np.save('data/'+ self.instruments_all[0] + str(self.hist) + self.t_frame + y + '.npy', full_data)
 
         return full_data
 
@@ -276,7 +286,7 @@ class DataGrabber():
 
 
     def load_state(self, arg):
-        day = self.full_year[0]
+        day = self.full_year
         #day = random.choice(self.full_year)
         #day = self.full_year[arg]
         return day

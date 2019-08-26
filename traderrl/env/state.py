@@ -66,19 +66,22 @@ class MarketSim(gym.Env):
         else:
             start = (self.start+self.starter+count)
             end = (self.end+self.starter+count)
-            self.state = self.state_full[start:end]
-        return self.state
+            self.state = []
+            for i in range(len(self.state_full)):
+                self.state.append(self.state_full[i][start:end])
+            #self.state = self.state_full[0][start:end]
+        return self.state[0]
 
     def get_price(self):
-        self.state_current = self.state[-1:]
+        self.state_current = self.state[0][-1:]
         self.price = self.state_current[0][0]
 
     def get_pm_price(self):
-        self.state_current = self.state[-2:]
+        self.state_current = self.state[0][-2:]
         self.pm_price = self.state_current[0]
     
     def get_diff(self):
-        self.state_current = self.state[-1:]
+        self.state_current = self.state[0][-1:]
         self.diff = self.state_current[0][1]
 
     def step(self, action):
@@ -134,8 +137,8 @@ class MarketSim(gym.Env):
         self.data_grabber = DataGrabber()
         self.player = Player(self.config)
         
-        self.starter = 0
-        #self.starter = np.random.random_integers(0,96)
+        #self.starter = 0
+        self.starter = np.random.random_integers(0,3540)
         self.count = 0
         self.make_episode()
         self.state = self.make_current_state(self.count)
@@ -159,9 +162,13 @@ class MarketSim(gym.Env):
 
     def state_maker(self):
         user = self.player.details(self.price)
-        market = self.state_over_time(self.state)
-        count = np.array([self.count])
+        market = self.state_over_time(self.state[0])
+        #count = np.array([self.count])
         state = self.data_grabber.flatten(market, user)
+        for i in range(len(self.state)):
+            market = self.state_over_time(self.state[i])
+            state = self.data_grabber.flatten(state, market)
+        
         #state = self.data_grabber.flatten2(market)
         return state
 
@@ -233,7 +240,7 @@ class MarketSim(gym.Env):
             h = close - h
             l = close - l
             v = state[i][4]
-            day = state[i][5]
+            #day = state[i][5]
         #hour = state[i][6]
         #minute = state[i][7]
     
