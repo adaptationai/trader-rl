@@ -232,8 +232,8 @@ class MarketSim(gym.Env):
             c = close - o 
             h = close - h
             l = close - l
-        #v = state[i][4]
-        #day = state[i][5]
+            v = state[i][4]
+            day = state[i][5]
         #hour = state[i][6]
         #minute = state[i][7]
     

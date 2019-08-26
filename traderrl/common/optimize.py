@@ -30,9 +30,9 @@ from stable_baselines.deepq import DQN
 from ..env import Template_Gym
 from ..common import CustomPolicy, CustomPolicy_2, CustomLSTMPolicy, CustomPolicy_4
 #env = Template_Gym()
-from stable_baselines.gail import generate_expert_traj
+#from stable_baselines.gail import generate_expert_traj
 
-from stable_baselines.gail import ExpertDataset
+#from stable_baselines.gail import ExpertDataset
 
 
 timestamp = datetime.datetime.now().strftime('%y%m%d%H%M%S')

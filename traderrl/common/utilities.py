@@ -28,10 +28,12 @@ class DataGrabber():
         self.hour = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
         self.minute = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32','33','34', '35', '36', '37', '38','39','40','41','42','43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59']
         self.day_feb = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28']
-        self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
+        self.day = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+        self.day_30 = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
         self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         self.granularity= ['M1', 'M5', 'M15', 'M30', 'H1', 'H4']
         self.day_feb_2 = ['28']
+        self.month31 = []
         if self.eval == True:
             self.years_list = ['2018', '2017']
         else:
@@ -43,7 +45,7 @@ class DataGrabber():
         
         self.year = random.choice(self.years_list)
         self.instruments = random.choice(self.instrument_list)
-        self.full_year = np.load('data/'+self.instruments+'60D'+self.year+'.npy')
+        #self.full_year = np.load('data/'+self.instruments+'120D'+self.year+'.npy')
         #self.full_year = np.load('data/EUR_USD60D2018.npy')
         
         
@@ -117,21 +119,23 @@ class DataGrabber():
 
     def process_to_array_2(self):
         
-        #self.years = ['2018']
+        self.years = ['2018']
         #self.month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11']
-        self.hist = 480
+        self.hist = 120
         #self.hist = 5760
-        self.t_frame = "M15"
+        self.t_frame = "D"
         #self.month = ['01','02','3']
         #self.years = ['2019']
-        
-        self.instrument = ['AUD_USD']
+        self.instrument = ['SPX500_USD']
+        #self.instrument = ['AUD_USD']
         for i in self.instrument:
             for y in self.years:
                 full_data = []
                 for m in self.month:
                     if m == "02":
-                        day = self.day_feb_2
+                        day = self.day_feb
+                    if m == "04" or m == '06' or m == '08' or m == '09':
+                        day = self.day_30
                     else:
                         day = self.day
                     for d in day:
@@ -143,6 +147,28 @@ class DataGrabber():
                         full_data.append(data)
         #full_data = self.flatten_simple(full_data)
                 np.save('data/'+ self.instrument[0] + str(self.hist) + self.t_frame + y + '.npy', full_data)
+
+        return full_data
+
+    def process_to_array_full(self):
+        
+        self.years = ['2017']
+        self.hist = 365
+        self.t_frame = "D"
+        self.instrument = ['AUD_USD','SPX500_USD']
+
+        for y in self.years:
+            full_data = []
+            for i in self.instrument:
+                
+                data = self.get_candles(y+'-12-31T21:00:00Z', self.hist, self.t_frame, i)
+                data = self.data_converted(data)
+                data = self.time_to_array(data)
+                data = self.toarray(data)
+            
+                full_data.append(data)
+        #full_data = self.flatten_simple(full_data)
+            np.save('data/'+ self.instrument[0] + str(self.hist) + self.t_frame + y + '.npy', full_data)
 
         return full_data
 
@@ -250,7 +276,8 @@ class DataGrabber():
 
 
     def load_state(self, arg):
-        day = random.choice(self.full_year)
+        day = self.full_year[0]
+        #day = random.choice(self.full_year)
         #day = self.full_year[arg]
         return day
     
